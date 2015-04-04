@@ -20,7 +20,7 @@ def calculate_context_vectors(input_file):
 	data = {} 
 	lex_list = xmldoc.getElementsByTagName('lexelt')
 	for node in lex_list:
-		s = []
+		all_context words = []
 		lexelt = node.getAttribute('item')
 		data[lexelt] = ()
 		sense_ctxt_dict = {}
@@ -38,16 +38,16 @@ def calculate_context_vectors(input_file):
 			context.append(left_k)
 			context.append(right_k)
 			print context
-			# Append words in current context to s
-			s.append(context)
+			# Append words in current context to all_context_words
+			all_context_words.append(context)
 			
 			if sense_id in sense_ctxt_dict:
 				sense_ctxt_dict[sense_id].append(context)
 			else:
 				sense_ctxt_dict[sense_id] = context
 		
-		# remove duplicate items in s
-		s = list(set(s))
+		# remove duplicate items in all_context_words to create s
+		s = list(set(all_context_words))
 
 		# Calculate context vectors with respect to s
 		sense_ids = []
