@@ -82,7 +82,7 @@ def calculate_context_vectors(language):
 		for each_context in contexts:
 			for each_word in each_context:
 				if each_word not in s:
-				s.append(each_word)
+					s.append(each_word)
 
 		# Calculate context vectors with respect to s
 		for each_context in contexts:
