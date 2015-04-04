@@ -8,7 +8,7 @@ import string
 
 def remove_punctuation(input_str):
 	for c in string.punctuation:
-		input_str.replace(c, '')
+		input_str = input_str.replace(c, '')
 	return input_str
 
 def replace_accented(input_str):
