@@ -18,7 +18,7 @@ def replace_accented(input_str):
 def to_lower(input_str):
 	return input_str.lower()
 
-def format_str(input_str):
+def format_context(input_str):
 	input_str = remove_punctuation(input_str)
 	input_str = replace_accented(input_str)
 	input_str = to_lower(input_str)
@@ -48,8 +48,8 @@ def calculate_context_vectors(input_file):
 			#instance_id = inst.getAttribute('id')
 			sense_id = inst.getElementsByTagName('answer')[0].getAttribute('senseid')
 			l = inst.getElementsByTagName('context')[0]
-			left = nltk.word_tokenize(remove_punctuation(l.childNodes[0].nodeValue))
-			right = nltk.word_tokenize(remove_punctuation(l.childNodes[2].nodeValue.replace('\n', '')))
+			left = nltk.word_tokenize(format_context(l.childNodes[0].nodeValue))
+			right = nltk.word_tokenize(format_context(l.childNodes[2].nodeValue.replace('\n', '')))
 			left_k = left[-10:]
 			right_k = right[0:10]
 			context = []
