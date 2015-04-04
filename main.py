@@ -4,6 +4,15 @@ import codecs
 import sys
 import unicodedata
 import nltk
+import string
+
+def remove_punctuation(input_str):
+	table = maketrans('', '')
+	return input_str.translate(table, string.punctuation)
+
+def replace_accented(input_str):
+    nkfd_form = unicodedata.normalize('NFKD', input_str)
+    return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
 def calculate_context_vectors(input_file):
 	'''
@@ -29,7 +38,7 @@ def calculate_context_vectors(input_file):
 		for inst in inst_list:
 			#instance_id = inst.getAttribute('id')
 			sense_id = inst.getElementsByTagName('answer')[0].getAttribute('senseid')
-			l = inst.getElementsByTagName('context')[0]
+			l = remove_punctuation(inst.getElementsByTagName('context')[0])
 			left = nltk.word_tokenize(l.childNodes[0].nodeValue)
 			right = nltk.word_tokenize(l.childNodes[2].nodeValue.replace('\n', ''))
 			left_k = left[-10:]
