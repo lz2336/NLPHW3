@@ -9,6 +9,7 @@ import string
 def remove_punctuation(input_str):
 	for c in string.punctuation:
 		input_str.replace(c, '')
+	return input_str
 
 def replace_accented(input_str):
     nkfd_form = unicodedata.normalize('NFKD', input_str)
