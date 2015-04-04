@@ -30,8 +30,10 @@ def calculate_context_vectors(input_file):
 			#instance_id = inst.getAttribute('id')
 			sense_id = inst.getElementsByTagName('answer')[0].getAttribute('senseid')
 			l = inst.getElementsByTagName('context')[0]
-			left_k = l.childNodes[0].nodeValue[-10:]
-			right_k = l.childNodes[2].nodeValue[0:10]
+			left = nltk.word_tokenize(l.childNodes[0].nodeValue)
+			right = nltk.word_tokenize(l.childNodes[2].nodeValue).replace('\n', '')
+			left_k = left[-10:]
+			right_k = right[0:10]
 			context = nltk.word_tokenize((left_k + right_k).replace('\n', ''))
 			print context
 			# Append words in current context to s
