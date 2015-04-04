@@ -33,6 +33,7 @@ def calculate_context_vectors(input_file):
 			left_k = l.childNodes[0].nodeValue[-10:]
 			right_k = l.childNodes[2].nodeValue[0:10]
 			context = nltk.word_tokenize((left_k + right_k).replace('\n', ''))
+			print context
 			# Append words in current context to s
 			s.append(context)
 			
