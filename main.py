@@ -15,13 +15,11 @@ def replace_accented(input_str):
     nkfd_form = unicodedata.normalize('NFKD', input_str)
     return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
-def to_lower(input_str):
-	return input_str.lower()
-
 def format_context(input_str):
 	input_str = remove_punctuation(input_str)
 	input_str = replace_accented(input_str)
-	input_str = to_lower(input_str)
+	input_str = input_str.lower()
+	return input_str
 
 def calculate_context_vectors(input_file):
 	'''
