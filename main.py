@@ -103,7 +103,7 @@ if __name__ == '__main__':
 	if len(sys.argv) != 2:
 		print 'Usage: python main.py [language]'
 		sys.exit(0)
-	data = calculate_context_vectors('data/' + sys.argv[1] + '-train.xml')
+	data = calculate_context_vectors(sys.argv[1])
 	for a_lexelt, a_tuple in data.iteritems():
 		print a_lexelt
 		print a_tuple
