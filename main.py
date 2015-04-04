@@ -7,7 +7,7 @@ import nltk
 import string
 
 def remove_punctuation(input_str):
-	table = input_str.maketrans('', '')
+	table = string.maketrans('', '')
 	return input_str.translate(table, string.punctuation)
 
 def replace_accented(input_str):
@@ -79,7 +79,7 @@ def calculate_context_vectors(input_file):
 
 if __name__ == '__main__':
 	if len(sys.argv) != 2:
-		print 'Usage: python baseline.py [language]'
+		print 'Usage: python main.py [language]'
 		sys.exit(0)
 	data = calculate_context_vectors('data/' + sys.argv[1] + '-train.xml')
 	for a_lexelt, a_tuple in data.iteritems():
