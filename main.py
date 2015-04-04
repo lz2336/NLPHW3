@@ -17,8 +17,7 @@ def calculate_context_vectors(input_file):
 		}
 	'''
 	xmldoc = minidom.parse(input_file)
-	data = {}
-	s = ''
+	data = {} 
 	lex_list = xmldoc.getElementsByTagName('lexelt')
 	for node in lex_list:
 		s = []
