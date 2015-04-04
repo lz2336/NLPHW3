@@ -36,9 +36,8 @@ def calculate_context_vectors(input_file):
 			right_k = right[0:10]
 			context = []
 			context = left_k + right_k
-			print context
 			# Append words in current context to all_context_words
-			all_context_words.append(context)
+			all_context_words += context
 			
 			if sense_id in sense_ctxt_dict:
 				sense_ctxt_dict[sense_id] += context
