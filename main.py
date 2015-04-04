@@ -7,7 +7,7 @@ import nltk
 import string
 
 def remove_punctuation(input_str):
-	table = maketrans('', '')
+	table = input_str.maketrans('', '')
 	return input_str.translate(table, string.punctuation)
 
 def replace_accented(input_str):
