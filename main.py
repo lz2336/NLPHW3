@@ -85,6 +85,7 @@ def calculate_context_vectors(language):
 					s.append(each_word)
 
 		# Calculate context vectors with respect to s
+		context_vectors = []
 		for each_context in contexts:
 			# Initialize context vector: all zeros
 			context_vector = [0] * len(s)
