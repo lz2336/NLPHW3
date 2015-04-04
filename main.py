@@ -20,7 +20,7 @@ def calculate_context_vectors(input_file):
 	data = {} 
 	lex_list = xmldoc.getElementsByTagName('lexelt')
 	for node in lex_list:
-		all_context words = []
+		all_context_words = []
 		lexelt = node.getAttribute('item')
 		data[lexelt] = ()
 		sense_ctxt_dict = {}
