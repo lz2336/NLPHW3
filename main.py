@@ -43,7 +43,7 @@ def calculate_context_vectors(input_file):
 				sense_ctxt_dict[sense_id] = context
 		
 		# remove duplicate items in s
-		s = set(s)
+		s = list(set(s))
 
 		# Calculate context vectors with respect to s
 		sense_ids = []
