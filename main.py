@@ -7,8 +7,8 @@ import nltk
 import string
 
 def remove_punctuation(input_str):
-	table = string.maketrans('', '')
-	return input_str.translate(table, string.punctuation)
+	table = dict((ord(punct), '') for punct in string.punctuation)
+	return input_str.translate(table)
 
 def replace_accented(input_str):
     nkfd_form = unicodedata.normalize('NFKD', input_str)
