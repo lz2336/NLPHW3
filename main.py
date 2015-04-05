@@ -127,7 +127,7 @@ def build_dev_data(language):
 
 			left = nltk.word_tokenize(l.childNodes[0].nodeValue)
 			right = nltk.word_tokenize(l.childNodes[2].nodeValue.replace('\n', ''))
-			
+
 			left_k = left[-10:]
 			right_k = right[0:10]
 			context = []
@@ -183,8 +183,8 @@ def build_dict(train_data):
 def disambiguate(language, model, train_data, dev_data):
 	outfile_svm = codecs.open(language + '-svm.answer', encoding = 'utf-8', mode = 'w')
 	outfile_kneighbors = codecs.open(language + '-k.answer', encoding = 'utf-8', mode = 'w')
-	for lexelt, id_ctxt_tuples in dev_data.iteritems():
-		for each_id_ctxt_tuple in id_ctxt_tuples:
+	for lexelt, id_ctxt_tuples in sorted(dev_data.iteritems(), key = lambda d: replace_accented(d[0].split('.')[0])):
+		for each_id_ctxt_tuple in sorted(id_ctxt_tuples, key = lambda d: int(d[0].split('.')[-1])):
 			instance_id = each_id_ctxt_tuple[0]
 			context = each_id_ctxt_tuple[1]
 			# Build context vector
