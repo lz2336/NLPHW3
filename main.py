@@ -93,6 +93,8 @@ def build_train_vectors(language):
 			context = []
 			context = left_k + right_k
 
+			print context
+
 			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
 			
@@ -149,6 +151,8 @@ def build_dev_data(language):
 			right_k = right[0:10]
 			context = []
 			context = left_k + right_k
+
+			print context
 
 			# FEAT: Remove stopwords
 			context = context.remove_stopwords(language, context)
