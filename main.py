@@ -239,7 +239,7 @@ def build_context_vectors(s, contexts):
 		context_vectors.append(context_vector)
 	return context_vectors
 
-def build_context_vectors_w_related(s, contexts):
+def build_context_vectors_w_related(s, contexts, language):
 	context_vectors = []
 	for each_context in contexts:
 		context_vector = [0] * len(s)
@@ -248,7 +248,7 @@ def build_context_vectors_w_related(s, contexts):
 				idx = s.index(each_word)
 				context_vector[idx] += 1
 			else:
-				related_words = get_synonyms(each_word) #+ get_hypernyms(each_word) + get_hyponyms(each_word)
+				related_words = get_synonyms(language, each_word) #+ get_hypernyms(each_word) + get_hyponyms(each_word)
 				for each_related_word in related_words:
 					if w in s:
 						idx = s.index(each_related_word)
@@ -287,7 +287,7 @@ def disambiguate(language, model, train_data, dev_data):
 			# Build context vector
 			s = train_data[lexelt][0]
 			# context_vector = build_context_vectors(s, [context])[0]
-			context_vector = build_context_vectors_w_related(s, [context])[0]
+			context_vector = build_context_vectors_w_related(s, [context], language)[0]
 			# print s
 			# print context_vector
 			print lexelt
