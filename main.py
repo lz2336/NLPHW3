@@ -166,7 +166,7 @@ def build_dict(language):
 		model_dict[lexelt] = clf
 	return model_dict
 
-def disambiguate(model, dev_data):
+def disambiguate(language, model, dev_data):
 	outfile = codecs.open(language + '.answer', encoding = 'utf-8', mode = 'w')
 	for lexelt in dev_data:
 		instance_id = dev_data[lexelt][0]
@@ -187,9 +187,10 @@ if __name__ == '__main__':
 		print 'Usage: python main.py [language]'
 		sys.exit(0)
 	
-	model = build_dict(sys.argv[1])
-	dev_data = build_dev_data(sys.argv[1])
-	disambiguate(model, dev_data)
+	language = sys.argv[1]
+	model = build_dict(language)
+	dev_data = build_dev_data(language)
+	disambiguate(language, model, dev_data)
 	
 
 
