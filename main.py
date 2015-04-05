@@ -58,15 +58,16 @@ def snowball_stem(language, words):
 
 def get_synonyms(language, word):
 	if language == 'English':
-		word_synsets = wn.synsets(word, lang = 'eng')
+		word_synsets = wn.synsets(word, lang='eng')
 	elif language == 'Catalan':
-		word_synsets = wn.synsets(word, lang = 'cat')
+		word_synsets = wn.synsets(word, lang='cat')
 	elif language == 'Spanish':
-		word_synsets = wn.synsets(word, lang = 'spa')
+		word_synsets = wn.synsets(word, lang='spa')
 	synonyms = []
 	for s in word_synsets:
 		lemmas = [replace_accented(w) for w in s.lemma_names()]
 		for w in lemmas:
+			w = w
 			if w not in synonyms:
 				synonyms.append(w)
 	return synonyms
