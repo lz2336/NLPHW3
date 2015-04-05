@@ -84,7 +84,7 @@ def build_train_vectors(language):
 					s.append(each_word)
 
 		# # Calculate context vectors with respect to s
-		context_vectors = build_context_vectors(s, sense_ids, contexts)
+		context_vectors = build_context_vectors(s, contexts)
 
 		data[lexelt] = (s, sense_ids, context_vectors)
 
