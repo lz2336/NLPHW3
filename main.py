@@ -170,6 +170,7 @@ def disambiguate(language, model, train_data, dev_data):
 		context_vector = build_context_vectors(s, [context])[0]
 		# Predict
 		predict_sense_id = model[lexelt].predict(context_vector)
+		print predict_sense_id
 		# predict_sense_id = model[lexelt][1].predict(context_vector)
 
 		# output
