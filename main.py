@@ -47,7 +47,7 @@ def format_str(input_str):
 # 			data[lexelt].append((instance_id, context))
 # 	return data
 
-def calculate_context_vectors(language):
+def build_train_vectors(language):
 	'''
 	##############
 	'''
@@ -56,12 +56,11 @@ def calculate_context_vectors(language):
 	xmldoc = minidom.parse(input_file)
 	lex_list = xmldoc.getElementsByTagName('lexelt')
 	for node in lex_list:
-		all_context_words = []
-		lexelt = format_str(node.getAttribute('item'))
+		lexelt = node.getAttribute('item')
 		data[lexelt] = ()
+		inst_list = node.getElementsByTagName('instance')
 		sense_ids = []
 		contexts = []
-		inst_list = node.getElementsByTagName('instance')
 
 		for inst in inst_list:
 			#instance_id = inst.getAttribute('id')
@@ -84,30 +83,124 @@ def calculate_context_vectors(language):
 				if each_word not in s:
 					s.append(each_word)
 
-		# Calculate context vectors with respect to s
-		context_vectors = []
-		for each_context in contexts:
-			# Initialize context vector: all zeros
-			context_vector = [0] * len(s)
-			for each_word in each_context:
-				idx = s.index(each_word)
-				context_vector[idx] += 1
-
-			context_vectors.append(context_vector)
+		# # Calculate context vectors with respect to s
+		context_vectors = build_context_vectors(s, sense_ids, contexts)
 
 		data[lexelt] = (s, sense_ids, context_vectors)
 
 	return data
 
+def build_dev_data(language):
+	'''
+	##############
+	'''
+	data = {} 
+	input_file = 'data/' + language + '-dev.xml'
+	xmldoc = minidom.parse(input_file)
+	lex_list = xmldoc.getElementsByTagName('lexelt')
+	for node in lex_list:
+		lexelt = node.getAttribute('item')
+		data[lexelt] = ()
+		inst_list = node.getElementsByTagName('instance')
+		instance_ids = []
+		contexts = []
+
+		for inst in inst_list:
+			instance_id = inst.getAttribute('id')
+			l = inst.getElementsByTagName('context')[0]
+			left = nltk.word_tokenize(format_str(l.childNodes[0].nodeValue))
+			right = nltk.word_tokenize(format_str(l.childNodes[2].nodeValue.replace('\n', '')))
+			left_k = left[-10:]
+			right_k = right[0:10]
+			context = []
+			context = left_k + right_k
+			
+			instance_ids.append(instance_id)
+			contexts.append(context)
+
+		# # Calculate context vectors with respect to s
+		# context_vectors = []
+		# for each_context in contexts:
+		# 	# Initialize context vector: all zeros
+		# 	context_vector = [0] * len(s)
+		# 	for each_word in each_context:
+		# 		if each_word in s:
+		# 			idx = s.index(each_word)
+		# 			context_vector[idx] += 1
+
+		# 	context_vectors.append(context_vector)
+
+		data[lexelt] = (instance_ids, contexts)
+
+	return data
+
+def build_context_vectors(s, contexts):
+	context_vectors = []
+	for each_context in contexts:
+		context_vector = [0] * len(s)
+		for each_word in each_context:
+			if each_word in s:
+				idx = s.index(each_word)
+				context_vector[idx] +=1
+		context_vectors.append(context_vector)
+	return context_vectors
+
+def train_svm(data, targets):
+	svm_clf = svm.SVC()
+	svm_clf.fit(data, targets)
+	return svm_clf
+
+def train_kneighbors(train_data):
+	kneighbors_clf = neighbors.KNeighborsClassifier()
+	kneighbors_clf.fit(data, targets)
+	return kneighbors_clf
+
+def build_dict(language):
+	train_data = build_train_vectors(language)
+	model_dict = {}
+	for lexelt in train_data:
+		sense_ids = train_data[lexelt][1]
+		context_vectors = train_data[lexelt][2]
+		clf = train_svm(context_vectors, sense_ids)
+		# clf = train_kneighbors(context_vectors, sense_ids)
+		model_dict[lexelt] = clf
+	return model_dict
+
+def disambiguate(model, dev_data):
+	outfile = codecs.open(language + '.answer', encoding = 'utf-8', mode = 'w')
+	for lexelt in dev_data:
+		instance_id = dev_data[lexelt][0]
+		contexts = dev_data[lexelt][1]
+		# Build context vector
+		s = train_data[lexelt][0]
+		context_vector = build_context_vectors(s, contexts)[0]
+		# Predict
+		predict_sense_id = model[lexelt].predict(context_vector)
+		# predict_sense_id = model[lexelt][1].predict(context_vector)
+
+		# output
+		outfile.write(lexelt + ' ' + instance_id + ' ' + predict_sense_id + '\n')
+	outfile.close
 
 if __name__ == '__main__':
 	if len(sys.argv) != 2:
 		print 'Usage: python main.py [language]'
 		sys.exit(0)
-	data = calculate_context_vectors(sys.argv[1])
-	for a_lexelt, a_tuple in data.iteritems():
-		print a_lexelt
-		print a_tuple
-		print '\n'
+	
+	model = build_dict(sys.argv[1])
+	dev_data = build_dev_data(sys.argv[1])
+	disambiguate(model, dev_data)
+	
+
+
+
+
+
+
+
+	# for a_lexelt, a_tuple in data.iteritems():
+	# 	print a_lexelt
+	# 	print a_tuple
+	# 	print '\n'
 
 
