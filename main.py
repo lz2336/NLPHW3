@@ -5,6 +5,7 @@ import sys
 import unicodedata
 from sklearn import svm, neighbors
 import nltk
+from nltk import wordnet as wn
 import string
 
 K_DIST = 10
@@ -54,6 +55,23 @@ def snowball_stem(language, words):
 		return words
 	stemmed = [stemmer.stem(w) for w in words]
 	return stemmed
+
+def get_synonyms(language, word):
+	if language == 'English':
+		word_synsets = wn.synsets(word, lang = 'eng')
+	elif language == 'Catalan':
+		word_synsets = wn.synsets(word, lang = 'cat')
+	elif language == 'Spanish':
+		word_synsets = wn.synsets(word, lang = 'spa')
+	synonyms = []
+	for s in word_synsets:
+		lemmas = [replace_accented(w) for w in s.lemma_names()]
+		for w in lemmas:
+			if w not in synonyms:
+				synonyms.append(w)
+	return synonyms
+
+
 
 # def parse_data(input_file):
 # 	'''
@@ -221,6 +239,24 @@ def build_context_vectors(s, contexts):
 		context_vectors.append(context_vector)
 	return context_vectors
 
+def build_context_vectors_w_related(s, contexts):
+	context_vectors = []
+	for each_context in contexts:
+		context_vector = [0] * len(s)
+		for each_word in each_context:
+			if each_word in s:
+				idx = s.index(each_word)
+				context_vector[idx] += 1
+			else:
+				related_words = get_synonyms(each_word) #+ get_hypernyms(each_word) + get_hyponyms(each_word)
+				for each_related_word in related_words:
+					if w in s:
+						idx = s.index(each_related_word)
+						context_vector[idx] += 1
+						break
+		context_vectors.append(context_vector)
+	return context_vectors
+
 def train_svm(data, targets):
 	svm_clf = svm.LinearSVC()
 	svm_clf.fit(data, targets)
@@ -250,7 +286,8 @@ def disambiguate(language, model, train_data, dev_data):
 			context = each_id_ctxt_tuple[1]
 			# Build context vector
 			s = train_data[lexelt][0]
-			context_vector = build_context_vectors(s, [context])[0]
+			# context_vector = build_context_vectors(s, [context])[0]
+			context_vector = build_context_vectors_w_related(s, [context])[0]
 			# print s
 			# print context_vector
 			print lexelt
