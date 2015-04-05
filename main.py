@@ -197,8 +197,8 @@ def disambiguate(language, model, train_data, dev_data):
 			kneighbors_predict_sense_id = model[lexelt][1].predict(context_vector)[0]
 
 			# output
-			outfile_svm.write(replace_accented(lexelt) + ' ' + replace_accented(instance_id) + ' ' + svm_predict_sense_id + '\n')
-			outfile_kneighbors.write(replace_accented(lexelt) + ' ' + replace_accented(instance_id) + ' ' + kneighbors_predict_sense_id + '\n')
+			outfile_svm.write(replace_accented(lexelt) + ' ' + replace_accented(instance_id) + ' ' + replace_accented(svm_predict_sense_id) + '\n')
+			outfile_kneighbors.write(replace_accented(lexelt) + ' ' + replace_accented(instance_id) + ' ' + replace_accented(kneighbors_predict_sense_id) + '\n')
 	outfile_svm.close()
 	outfile_kneighbors.close()
 
