@@ -16,7 +16,7 @@ def replace_accented(input_str):
     nkfd_form = unicodedata.normalize('NFKD', input_str)
     return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
-def format_str(input_str):
+def apply_features(input_str):
 	input_str = remove_punctuation(input_str)
 	input_str = replace_accented(input_str)
 	input_str = input_str.lower()
@@ -71,11 +71,11 @@ def build_train_vectors(language):
 			else:
 				l = inst.getElementsByTagName('context')[0].getElementsByTagName('target')[0]
 			
-			left = nltk.word_tokenize(l.childNodes[0].nodeValue)
-			right = nltk.word_tokenize(l.childNodes[2].nodeValue.replace('\n', ''))
+			left_str = l.childNodes[0].nodeValue.replace('\n', '')
+			right_str = l.childNodes[2].nodeValue.replace('\n', '')
 
-			left = format_str(left)
-			right = format_str(right)
+			left = nltk.word_tokenize(apply_features(left_str))
+			right = nltk.word_tokenize(apply_features(right_str))
 
 			left_k = left[-10:]
 			right_k = right[0:10]
@@ -125,11 +125,11 @@ def build_dev_data(language):
 			else:
 				l = inst.getElementsByTagName('context')[0].getElementsByTagName('target')[0]
 
-			left = nltk.word_tokenize(l.childNodes[0].nodeValue)
-			right = nltk.word_tokenize(l.childNodes[2].nodeValue.replace('\n', ''))
+			left_str = l.childNodes[0].nodeValue.replace('\n', '')
+			right_str = l.childNodes[2].nodeValue.replace('\n', '')
 
-			left = format_str(left)
-			right = format_str(right)
+			left = nltk.word_tokenize(apply_features(left_str))
+			right = nltk.word_tokenize(apply_features(right_str))
 
 			left_k = left[-10:]
 			right_k = right[0:10]
