@@ -16,6 +16,12 @@ def replace_accented(input_str):
     nkfd_form = unicodedata.normalize('NFKD', input_str)
     return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
+def apply_features(input_str):
+	input_str = remove_punctuation(input_str)
+	input_str = replace_accented(input_str)
+	input_str = input_str.lower()
+	return input_str
+
 def remove_stopwords(language, words):
 	language = language.lower()
 	if language == 'catalan':
@@ -26,13 +32,16 @@ def remove_stopwords(language, words):
 		stopwords = [replace_accented(w) for w in stopwords_accented]
 	removed = [w for w in words if w not in stopwords]
 	return removed
-	
 
-def apply_features(input_str):
-	input_str = remove_punctuation(input_str)
-	input_str = replace_accented(input_str)
-	input_str = input_str.lower()
-	return input_str
+def porter_stem(words):
+	pstemmer = nltk.stem.porter.PorterStemmer()
+	pstemmed = [pstemmer.stem(w) for w in words]
+	return pstemmed
+
+def lancaster_stem(words):
+	lstemmer = nltk.stem.lancaster.LancasterStemmer()
+	lstemmed = [lstemmer.stem(w) for w in words]
+	return lstemmed
 
 # def parse_data(input_file):
 # 	'''
@@ -100,6 +109,10 @@ def build_train_vectors(language):
 			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
 
+			# FEAT: stemming
+			context = porter_stem(context)
+			# context = lancaster_stem(context)
+
 			print context
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
@@ -156,8 +169,13 @@ def build_dev_data(language):
 			context = []
 			context = left_k + right_k
 
-			# FEAT: Remove stopwords
+			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
+
+			# FEAT: stemming
+			if language == 'English':
+				context = porter_stem(context)
+				# context = lancaster_stem(context)
 
 		# # Calculate context vectors with respect to s
 		# context_vectors = []
