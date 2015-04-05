@@ -93,10 +93,10 @@ def build_train_vectors(language):
 			context = []
 			context = left_k + right_k
 
-			print context
-
 			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
+
+			print context
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
@@ -152,10 +152,8 @@ def build_dev_data(language):
 			context = []
 			context = left_k + right_k
 
-			print context
-
 			# FEAT: Remove stopwords
-			context = context.remove_stopwords(language, context)
+			context = remove_stopwords(language, context)
 
 		# # Calculate context vectors with respect to s
 		# context_vectors = []
