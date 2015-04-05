@@ -64,7 +64,7 @@ def build_train_vectors(language):
 
 		for inst in inst_list:
 			#instance_id = inst.getAttribute('id')
-			sense_id = replace_accented(inst.getElementsByTagName('answer')[0].getAttribute('senseid'))
+			sense_id = inst.getElementsByTagName('answer')[0].getAttribute('senseid')
 			
 			if language == 'English':
 				l = inst.getElementsByTagName('context')[0]
@@ -82,7 +82,7 @@ def build_train_vectors(language):
 			context = []
 			context = left_k + right_k
 			
-			sense_ids.append(sense_id)
+			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
 
 			# print lexelt
@@ -148,7 +148,7 @@ def build_dev_data(language):
 
 		# 	context_vectors.append(context_vector)
 
-			data[lexelt].append((instance_id, context))
+			data[lexelt].append((instance_id.encode('utf-8', 'ignore'), context))
 
 	return data
 
