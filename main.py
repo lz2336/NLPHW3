@@ -155,13 +155,14 @@ def build_dict(train_data):
 	for lexelt in train_data:
 		sense_ids = train_data[lexelt][1]
 		context_vectors = train_data[lexelt][2]
-		clf = train_svm(context_vectors, sense_ids)
-		# clf = train_kneighbors(context_vectors, sense_ids)
-		model_dict[lexelt] = clf
+		svm_clf = train_svm(context_vectors, sense_ids)
+		kneighbors_clf = train_kneighbors(context_vectors, sense_ids)
+		model_dict[lexelt] = (svm_clf, kneighbors_clf)
 	return model_dict
 
 def disambiguate(language, model, train_data, dev_data):
-	outfile = codecs.open(language + '.answer', encoding = 'utf-8', mode = 'w')
+	outfile_svm = codecs.open(language + '-svm.answer', encoding = 'utf-8', mode = 'w')
+	outfile_kneighbors = codecs.open(language + '-k.answer', encoding = 'utf-8', mode = 'w')
 	for lexelt in dev_data:
 		instance_id = dev_data[lexelt][0]
 		context = dev_data[lexelt][1]
@@ -169,12 +170,14 @@ def disambiguate(language, model, train_data, dev_data):
 		s = train_data[lexelt][0]
 		context_vector = build_context_vectors(s, [context])[0]
 		# Predict
-		predict_sense_id = model[lexelt].predict(context_vector)[0]
-		# predict_sense_id = model[lexelt][1].predict(context_vector)
+		svm_predict_sense_id = model[lexelt][0].predict(context_vector)[0]
+		kneighbors_predict_sense_id = model[lexelt][1].predict(context_vector)[0]
 
 		# output
-		outfile.write(lexelt + ' ' + instance_id + ' ' + predict_sense_id + '\n')
-	outfile.close
+		outfile_svm.write(lexelt + ' ' + instance_id + ' ' + svm_predict_sense_id + '\n')
+		outfile_kneighbors.write(lexelt + ' ' + instance_id + ' ' + kneighbors_predict_sense_id + '\n')
+	outfile_svm.close()
+	outfile_kneighbors.close()
 
 if __name__ == '__main__':
 	if len(sys.argv) != 2:
