@@ -164,7 +164,7 @@ def build_context_vectors(s, contexts):
 	return context_vectors
 
 def train_svm(data, targets):
-	svm_clf = svm.SVC()
+	svm_clf = svm.LinearSVC()
 	svm_clf.fit(data, targets)
 	return svm_clf
 
