@@ -145,7 +145,7 @@ def train_svm(data, targets):
 	svm_clf.fit(data, targets)
 	return svm_clf
 
-def train_kneighbors(train_data):
+def train_kneighbors(data, targets):
 	kneighbors_clf = neighbors.KNeighborsClassifier()
 	kneighbors_clf.fit(data, targets)
 	return kneighbors_clf
