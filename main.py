@@ -243,7 +243,7 @@ def build_context_vectors_w_related(s, contexts):
 				idx = s.index(each_word)
 				context_vector[idx] += 1
 			else:
-				related_words = get_synonyms(language, each_word) #+ get_hypernyms(each_word) + get_hyponyms(each_word)
+				related_words = get_synonyms(each_word) #+ get_hypernyms(each_word) + get_hyponyms(each_word)
 				for each_related_word in related_words:
 					if w in s:
 						idx = s.index(each_related_word)
