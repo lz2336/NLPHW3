@@ -136,7 +136,7 @@ def build_dev_data(language):
 
 		# 	context_vectors.append(context_vector)
 
-		data[lexelt].append((instance_id, context))
+			data[lexelt].append((instance_id, context))
 
 	return data
 
