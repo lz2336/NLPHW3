@@ -56,7 +56,7 @@ def build_train_vectors(language):
 	xmldoc = minidom.parse(input_file)
 	lex_list = xmldoc.getElementsByTagName('lexelt')
 	for node in lex_list:
-		lexelt = node.getAttribute('item')
+		lexelt = replace_accented(node.getAttribute('item'))
 		data[lexelt] = ()
 		inst_list = node.getElementsByTagName('instance')
 		sense_ids = []
@@ -114,7 +114,7 @@ def build_dev_data(language):
 	xmldoc = minidom.parse(input_file)
 	lex_list = xmldoc.getElementsByTagName('lexelt')
 	for node in lex_list:
-		lexelt = node.getAttribute('item')
+		lexelt = replace_accented(node.getAttribute('item'))
 		data[lexelt] = []
 		inst_list = node.getElementsByTagName('instance')
 
@@ -200,8 +200,10 @@ def disambiguate(language, model, train_data, dev_data):
 			kneighbors_predict_sense_id = model[lexelt][1].predict(context_vector)[0]
 
 			# output
-			outfile_svm.write(replace_accented(lexelt) + ' ' + replace_accented(instance_id) + ' ' + replace_accented(svm_predict_sense_id) + '\n')
-			outfile_kneighbors.write(replace_accented(lexelt) + ' ' + replace_accented(instance_id) + ' ' + replace_accented(kneighbors_predict_sense_id) + '\n')
+			# outfile_svm.write(replace_accented(lexelt) + ' ' + replace_accented(instance_id) + ' ' + replace_accented(svm_predict_sense_id) + '\n')
+			# outfile_kneighbors.write(replace_accented(lexelt) + ' ' + replace_accented(instance_id) + ' ' + replace_accented(kneighbors_predict_sense_id) + '\n')
+			outfile_svm.write(lexelt + ' ' + instance_id + ' ' + svm_predict_sense_id + '\n')
+			outfile_kneighbors.write(lexelt + ' ' + instance_id + ' ' + kneighbors_predict_sense_id + '\n')
 	outfile_svm.close()
 	outfile_kneighbors.close()
 
