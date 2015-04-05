@@ -43,6 +43,16 @@ def lancaster_stem(words):
 	lstemmed = [lstemmer.stem(w) for w in words]
 	return lstemmed
 
+def snowball_stem(language, words):
+	if language == 'English':
+		stemmer = nltk.stem.snowball.EnglishStemmer(ignore_stopwords=False)
+	elif language == 'Spanish':
+		stemmer = nltk.stem.snowball.SpanishStemmer(ignore_stopwords=False)
+	else:
+		return words
+	stemmed = [stemmer.stem(w) for w in words]
+	return stemmed
+
 # def parse_data(input_file):
 # 	'''
 # 	Parse the .xml dev data file
@@ -86,7 +96,8 @@ def build_train_vectors(language):
 		for inst in inst_list:
 			#instance_id = inst.getAttribute('id')
 			sense_id = replace_accented(inst.getElementsByTagName('answer')[0].getAttribute('senseid'))
-			# Skip senses with senseid "U" (English only)
+			
+			#FEAT: skip senses with senseid "U" (English only)
 			if sense_id == 'U':
 				continue
 			
@@ -110,8 +121,11 @@ def build_train_vectors(language):
 			context = remove_stopwords(language, context)
 
 			# FEAT: stemming
-			# context = porter_stem(context)
-			context = lancaster_stem(context)
+			# if language == 'English':
+				# context = porter_stem(context)
+				# context = lancaster_stem(context)
+			context = snowball_stem(language, context)
+
 
 			print context
 			
@@ -173,9 +187,10 @@ def build_dev_data(language):
 			context = remove_stopwords(language, context)
 
 			# FEAT: stemming
-			if language == 'English':
-				# context = porter_stem(context)
-				context = lancaster_stem(context)
+			# if language == 'English':
+			# 	context = porter_stem(context)
+			# 	context = lancaster_stem(context)
+			context = snowball_stem(language, context)
 
 		# # Calculate context vectors with respect to s
 		# context_vectors = []
