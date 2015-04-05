@@ -155,8 +155,7 @@ def train_kneighbors(train_data):
 	kneighbors_clf.fit(data, targets)
 	return kneighbors_clf
 
-def build_dict(language):
-	train_data = build_train_vectors(language)
+def build_dict(train_data):
 	model_dict = {}
 	for lexelt in train_data:
 		sense_ids = train_data[lexelt][1]
@@ -166,7 +165,7 @@ def build_dict(language):
 		model_dict[lexelt] = clf
 	return model_dict
 
-def disambiguate(language, model, dev_data):
+def disambiguate(language, model, train_data, dev_data):
 	outfile = codecs.open(language + '.answer', encoding = 'utf-8', mode = 'w')
 	for lexelt in dev_data:
 		instance_id = dev_data[lexelt][0]
@@ -188,9 +187,10 @@ if __name__ == '__main__':
 		sys.exit(0)
 	
 	language = sys.argv[1]
-	model = build_dict(language)
+	train_data = build_train_vectors(language)
+	model = build_dict(train_data)
 	dev_data = build_dev_data(language)
-	disambiguate(language, model, dev_data)
+	disambiguate(language, model, train_data, dev_data)
 	
 
 
