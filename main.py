@@ -65,7 +65,12 @@ def build_train_vectors(language):
 		for inst in inst_list:
 			#instance_id = inst.getAttribute('id')
 			sense_id = inst.getElementsByTagName('answer')[0].getAttribute('senseid')
-			l = inst.getElementsByTagName('context')[0]
+			
+			if language == 'English':
+				l = inst.getElementsByTagName('context')[0]
+			else:
+				l = inst.getElementsByTagName('context')[0].getElementsByTagName('target')[0]
+			
 			left = nltk.word_tokenize(format_str(l.childNodes[0].nodeValue))
 			right = nltk.word_tokenize(format_str(l.childNodes[2].nodeValue.replace('\n', '')))
 			left_k = left[-10:]
