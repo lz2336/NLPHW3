@@ -80,6 +80,9 @@ def build_train_vectors(language):
 			
 			sense_ids.append(sense_id)
 			contexts.append(context)
+
+			print lexelt
+			print context
 		
 		# remove duplicate items in all_context_words to create s
 		s = []
@@ -92,9 +95,9 @@ def build_train_vectors(language):
 		context_vectors = build_context_vectors(s, contexts)
 
 		data[lexelt] = (s, sense_ids, context_vectors)
-		print lexelt
-		print sense_ids
-		print context_vectors
+		# print lexelt
+		# print sense_ids
+		# print context_vectors
 
 	return data
 
