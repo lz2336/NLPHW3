@@ -64,7 +64,7 @@ def build_train_vectors(language):
 
 		for inst in inst_list:
 			#instance_id = inst.getAttribute('id')
-			sense_id = inst.getElementsByTagName('answer')[0].getAttribute('senseid')
+			sense_id = replace_accented(inst.getElementsByTagName('answer')[0].getAttribute('senseid'))
 			
 			if language == 'English':
 				l = inst.getElementsByTagName('context')[0]
@@ -119,7 +119,7 @@ def build_dev_data(language):
 		inst_list = node.getElementsByTagName('instance')
 
 		for inst in inst_list:
-			instance_id = inst.getAttribute('id')
+			instance_id = replace_accented(inst.getAttribute('id'))
 			if language == 'English':
 				l = inst.getElementsByTagName('context')[0]
 			else:
