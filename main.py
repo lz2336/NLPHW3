@@ -18,9 +18,11 @@ def replace_accented(input_str):
 
 def remove_stopwords(language, words):
 	language = language.lower()
-	if language not in nltk.corpus.stopwords.fileids():
-		return words
-	stopwords_accented = nltk.corpus.stopwords.words(language)
+	if language == 'catalan':
+		# Using google stop word list for catalan: http://meta.wikimedia.org/wiki/Stop_word_list/google_stop_word_list#Catalan
+		stopwords_accented = [de es i a o un una unes uns un tot també altre algun alguna alguns algunes ser és soc ets som estic està estem esteu estan com en per perquè per que estat estava ans abans éssent ambdós però per poder potser puc podem podeu poden vaig va van fer faig fa fem feu fan cada fi inclòs primer des de conseguir consegueixo consigueix consigueixes conseguim consigueixen anar haver tenir tinc te tenim teniu tene el la les els seu aquí meu teu ells elles ens nosaltres vosaltres si dins sols solament saber saps sap sabem sabeu saben últim llarg bastant fas molts aquells aquelles seus llavors sota dalt ús molt era eres erem eren mode bé quant quan on mentre qui amb entre sense jo aquell]
+	else:
+		stopwords_accented = nltk.corpus.stopwords.words(language)
 	stopwords = [replace_accented(w) for w in stopwords_accented]
 	removed = [w for w in words if w not in stopwords]
 	return removed
