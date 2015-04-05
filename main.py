@@ -74,8 +74,8 @@ def build_train_vectors(language):
 			left = nltk.word_tokenize(l.childNodes[0].nodeValue)
 			right = nltk.word_tokenize(l.childNodes[2].nodeValue.replace('\n', ''))
 
-			# left = format_str(left)
-			# right = format_str(right)
+			left = format_str(left)
+			right = format_str(right)
 
 			left_k = left[-10:]
 			right_k = right[0:10]
@@ -127,6 +127,9 @@ def build_dev_data(language):
 
 			left = nltk.word_tokenize(l.childNodes[0].nodeValue)
 			right = nltk.word_tokenize(l.childNodes[2].nodeValue.replace('\n', ''))
+
+			left = format_str(left)
+			right = format_str(right)
 
 			left_k = left[-10:]
 			right_k = right[0:10]
