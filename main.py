@@ -16,6 +16,10 @@ def replace_accented(input_str):
     nkfd_form = unicodedata.normalize('NFKD', input_str)
     return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
+# def remove_stopwords(input_str):
+
+	
+
 def apply_features(input_str):
 	input_str = remove_punctuation(input_str)
 	input_str = replace_accented(input_str)
@@ -65,6 +69,9 @@ def build_train_vectors(language):
 		for inst in inst_list:
 			#instance_id = inst.getAttribute('id')
 			sense_id = replace_accented(inst.getElementsByTagName('answer')[0].getAttribute('senseid'))
+			# Skip senses with senseid "U" (English only)
+			if sense_id == 'U':
+				continue
 			
 			if language == 'English':
 				l = inst.getElementsByTagName('context')[0]
