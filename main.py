@@ -7,6 +7,8 @@ from sklearn import svm, neighbors
 import nltk
 import string
 
+K_DIST = 10
+
 def remove_punctuation(input_str):
 	for c in string.punctuation:
 		input_str = input_str.replace(c, '')
@@ -112,8 +114,8 @@ def build_train_vectors(language):
 			left = nltk.word_tokenize(apply_features(left_str))
 			right = nltk.word_tokenize(apply_features(right_str))
 
-			left_k = left[-10:]
-			right_k = right[0:10]
+			left_k = left[-K_DIST:]
+			right_k = right[0:K_DIST]
 			context = []
 			context = left_k + right_k
 
@@ -270,7 +272,7 @@ def disambiguate(language, model, train_data, dev_data):
 
 if __name__ == '__main__':
 	if len(sys.argv) != 2:
-		print 'Usage: python main.py [language]'
+		print 'Usage: python main.py [Language]'
 		sys.exit(0)
 	
 	language = sys.argv[1]
