@@ -16,8 +16,12 @@ def replace_accented(input_str):
     nkfd_form = unicodedata.normalize('NFKD', input_str)
     return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
-# def remove_stopwords(input_str):
-
+def remove_stopwords(language, words):
+	language = language.lower()
+	stopwords_accented = nltk.corpus.stopwords.words(language)
+	stopwords = [replace_accented(w) for w in stopwords_accented]
+	removed = [w for w in words if w not in stopwords]
+	return removed
 	
 
 def apply_features(input_str):
@@ -88,6 +92,9 @@ def build_train_vectors(language):
 			right_k = right[0:10]
 			context = []
 			context = left_k + right_k
+
+			# FEAT: remove stopwords
+			context = remove_stopwords(context)
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
@@ -142,6 +149,9 @@ def build_dev_data(language):
 			right_k = right[0:10]
 			context = []
 			context = left_k + right_k
+
+			# FEAT: Remove stopwords
+			context = context.remove_stopwords(context)
 
 		# # Calculate context vectors with respect to s
 		# context_vectors = []
