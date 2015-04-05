@@ -111,7 +111,7 @@ def build_dev_data(language):
 	lex_list = xmldoc.getElementsByTagName('lexelt')
 	for node in lex_list:
 		lexelt = node.getAttribute('item')
-		data[lexelt] = ()
+		data[lexelt] = []
 		inst_list = node.getElementsByTagName('instance')
 
 		for inst in inst_list:
@@ -136,7 +136,7 @@ def build_dev_data(language):
 
 		# 	context_vectors.append(context_vector)
 
-		data[lexelt] = (instance_id, context)
+		data[lexelt].append((instance_id, context))
 
 	return data
 
@@ -174,9 +174,9 @@ def build_dict(train_data):
 def disambiguate(language, model, train_data, dev_data):
 	outfile_svm = codecs.open(language + '-svm.answer', encoding = 'utf-8', mode = 'w')
 	outfile_kneighbors = codecs.open(language + '-k.answer', encoding = 'utf-8', mode = 'w')
-	for lexelt in dev_data:
-		instance_id = dev_data[lexelt][0]
-		context = dev_data[lexelt][1]
+	for lexelt, (instance_id, context) in dev_data.iteritems():
+		# instance_id = dev_data[lexelt][0]
+		# context = dev_data[lexelt][1]
 		# Build context vector
 		s = train_data[lexelt][0]
 		context_vector = build_context_vectors(s, [context])[0]
