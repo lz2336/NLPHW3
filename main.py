@@ -110,8 +110,8 @@ def build_train_vectors(language):
 			context = remove_stopwords(language, context)
 
 			# FEAT: stemming
-			context = porter_stem(context)
-			# context = lancaster_stem(context)
+			# context = porter_stem(context)
+			context = lancaster_stem(context)
 
 			print context
 			
@@ -174,8 +174,8 @@ def build_dev_data(language):
 
 			# FEAT: stemming
 			if language == 'English':
-				context = porter_stem(context)
-				# context = lancaster_stem(context)
+				# context = porter_stem(context)
+				context = lancaster_stem(context)
 
 		# # Calculate context vectors with respect to s
 		# context_vectors = []
