@@ -102,8 +102,6 @@ def build_dev_data(language):
 		lexelt = node.getAttribute('item')
 		data[lexelt] = ()
 		inst_list = node.getElementsByTagName('instance')
-		instance_ids = []
-		contexts = []
 
 		for inst in inst_list:
 			instance_id = inst.getAttribute('id')
@@ -114,9 +112,6 @@ def build_dev_data(language):
 			right_k = right[0:10]
 			context = []
 			context = left_k + right_k
-			
-			instance_ids.append(instance_id)
-			contexts.append(context)
 
 		# # Calculate context vectors with respect to s
 		# context_vectors = []
@@ -130,7 +125,7 @@ def build_dev_data(language):
 
 		# 	context_vectors.append(context_vector)
 
-		data[lexelt] = (instance_ids, contexts)
+		data[lexelt] = (instance_id, context)
 
 	return data
 
@@ -169,10 +164,10 @@ def disambiguate(language, model, train_data, dev_data):
 	outfile = codecs.open(language + '.answer', encoding = 'utf-8', mode = 'w')
 	for lexelt in dev_data:
 		instance_id = dev_data[lexelt][0]
-		contexts = dev_data[lexelt][1]
+		context = dev_data[lexelt][1]
 		# Build context vector
 		s = train_data[lexelt][0]
-		context_vector = build_context_vectors(s, contexts)[0]
+		context_vector = build_context_vectors(s, [context])[0]
 		# Predict
 		predict_sense_id = model[lexelt].predict(context_vector)
 		# predict_sense_id = model[lexelt][1].predict(context_vector)
