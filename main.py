@@ -174,19 +174,20 @@ def build_dict(train_data):
 def disambiguate(language, model, train_data, dev_data):
 	outfile_svm = codecs.open(language + '-svm.answer', encoding = 'utf-8', mode = 'w')
 	outfile_kneighbors = codecs.open(language + '-k.answer', encoding = 'utf-8', mode = 'w')
-	for lexelt, (instance_id, context) in dev_data.iteritems():
-		# instance_id = dev_data[lexelt][0]
-		# context = dev_data[lexelt][1]
-		# Build context vector
-		s = train_data[lexelt][0]
-		context_vector = build_context_vectors(s, [context])[0]
-		# Predict
-		svm_predict_sense_id = model[lexelt][0].predict(context_vector)[0]
-		kneighbors_predict_sense_id = model[lexelt][1].predict(context_vector)[0]
+	for lexelt, id_ctxt_tuples in dev_data.iteritems():
+		for each_id_ctxt_tuple in id_ctxt_tuples:
+			instance_id = each_id_ctxt_tuple[0]
+			context = each_id_ctxt_tuple[1]
+			# Build context vector
+			s = train_data[lexelt][0]
+			context_vector = build_context_vectors(s, [context])[0]
+			# Predict
+			svm_predict_sense_id = model[lexelt][0].predict(context_vector)[0]
+			kneighbors_predict_sense_id = model[lexelt][1].predict(context_vector)[0]
 
-		# output
-		outfile_svm.write(lexelt + ' ' + instance_id + ' ' + svm_predict_sense_id + '\n')
-		outfile_kneighbors.write(lexelt + ' ' + instance_id + ' ' + kneighbors_predict_sense_id + '\n')
+			# output
+			outfile_svm.write(lexelt + ' ' + instance_id + ' ' + svm_predict_sense_id + '\n')
+			outfile_kneighbors.write(lexelt + ' ' + instance_id + ' ' + kneighbors_predict_sense_id + '\n')
 	outfile_svm.close()
 	outfile_kneighbors.close()
 
