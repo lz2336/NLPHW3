@@ -58,6 +58,7 @@ def snowball_stem(language, words):
 
 def get_synonyms(word):
 	synonyms = []
+	word_synsets = wn.synsets(word)
 	for s in word_synsets:
 		lemmas = [replace_accented(w) for w in s.lemma_names()]
 		for w in lemmas:
