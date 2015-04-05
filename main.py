@@ -56,18 +56,12 @@ def snowball_stem(language, words):
 	stemmed = [stemmer.stem(w) for w in words]
 	return stemmed
 
-def get_synonyms(language, word):
-	if language == 'English':
-		word_synsets = wn.synsets(word, lang='eng')
-	elif language == 'Catalan':
-		word_synsets = wn.synsets(word, lang='cat')
-	elif language == 'Spanish':
-		word_synsets = wn.synsets(word, lang='spa')
+def get_synonyms(word):
 	synonyms = []
 	for s in word_synsets:
 		lemmas = [replace_accented(w) for w in s.lemma_names()]
 		for w in lemmas:
-			w = w
+			w = snowball_stem('English', w)
 			if w not in synonyms:
 				synonyms.append(w)
 	return synonyms
@@ -240,7 +234,7 @@ def build_context_vectors(s, contexts):
 		context_vectors.append(context_vector)
 	return context_vectors
 
-def build_context_vectors_w_related(s, contexts, language):
+def build_context_vectors_w_related(s, contexts):
 	context_vectors = []
 	for each_context in contexts:
 		context_vector = [0] * len(s)
@@ -287,8 +281,13 @@ def disambiguate(language, model, train_data, dev_data):
 			context = each_id_ctxt_tuple[1]
 			# Build context vector
 			s = train_data[lexelt][0]
-			# context_vector = build_context_vectors(s, [context])[0]
-			context_vector = build_context_vectors_w_related(s, [context], language)[0]
+			
+			if language == 'English':
+				# FEAT: build context vectors with related words (en only)
+				context_vector = build_context_vectors_w_related(s, [context])[0]
+			else:
+				context_vector = build_context_vectors(s, [context])[0]
+			
 			# print s
 			# print context_vector
 			print lexelt
