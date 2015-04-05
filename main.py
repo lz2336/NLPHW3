@@ -18,6 +18,8 @@ def replace_accented(input_str):
 
 def remove_stopwords(language, words):
 	language = language.lower()
+	if language not in nltk.corpus.stopwords.fileids():
+		return words
 	stopwords_accented = nltk.corpus.stopwords.words(language)
 	stopwords = [replace_accented(w) for w in stopwords_accented]
 	removed = [w for w in words if w not in stopwords]
