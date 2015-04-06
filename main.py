@@ -145,11 +145,8 @@ def chi_sq_filter(s, sense_ids, context_vectors):
 	for p_value, word in sorted(zip(p_values, s_copy), key=lambda d: d[0]):
 		if p_value < 0.9:
 			new_s.append(word)
-		else:
-			break
 
 	return new_s
-
 
 
 def build_train_vectors(language):
@@ -230,9 +227,9 @@ def build_train_vectors(language):
 		# # Calculate context vectors with respect to s
 		context_vectors = build_context_vectors(s, contexts)
 
-		# FEAT: 4d  chi2
-		s = chi_sq_filter(s, sense_ids, context_vectors)
-		context_vectors = build_context_vectors(s, contexts)
+		# # FEAT: 4d  chi2
+		# s = chi_sq_filter(s, sense_ids, context_vectors)
+		# context_vectors = build_context_vectors(s, contexts)
 
 		data[lexelt] = (s, sense_ids, context_vectors)
 	return data
