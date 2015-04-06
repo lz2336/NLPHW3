@@ -109,7 +109,7 @@ def calculate_rel_score(word, sense_id, contexts, sense_ids):
 	elif word_in_context_same_sense == 0:
 		rel_score = -1000
 	else:
-		rel_score = math.log(float(word_in_context_same_sense) / float(word_in_context_notsame_sense)
+		rel_score = math.log(float(word_in_context_same_sense) / float(word_in_context_notsame_sense))
 
 	return rel_score
 
