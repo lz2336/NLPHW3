@@ -142,8 +142,11 @@ def chi_sq_filter(s, sense_ids, context_vectors):
 	cutoff = len(s) * 4 // 5
 	new_s = []
 
-	for p_value, word in sorted(zip(p_values, s_copy), key=lambda d: d[0])[:(cutoff + 1)]:
-		new_s.append(word)
+	for p_value, word in sorted(zip(p_values, s_copy), key=lambda d: d[0]):
+		if p_value < 0.6
+			new_s.append(word)
+		else:
+			break
 
 	return new_s
 
