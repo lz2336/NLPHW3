@@ -28,7 +28,7 @@ def replace_numerals(input_str):
 			new_str += '_NUM_ '
 		else:
 			new_str += (word + ' ')
-	return replaced_words
+	return new_str
 
 def apply_features(input_str):
 	input_str = remove_punctuation(input_str)
