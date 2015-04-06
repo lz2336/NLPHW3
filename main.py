@@ -174,6 +174,9 @@ def build_train_vectors(language):
 			right_k = right[0:K_DIST]
 			context = []
 			context = left_k + right_k
+
+			print context
+
 			# Skip if context happens to be empty 
 			if context == []:
 				continue
@@ -246,8 +249,6 @@ def build_dev_data(language):
 			right_k = right[0:K_DIST]
 			context = []
 			context = left_k + right_k
-
-			print context
 
 			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
