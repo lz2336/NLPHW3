@@ -175,8 +175,6 @@ def build_train_vectors(language):
 			context = []
 			context = left_k + right_k
 
-			print context
-
 			# Skip if context happens to be empty 
 			if context == []:
 				continue
@@ -190,10 +188,6 @@ def build_train_vectors(language):
 
 			# FEAT: stemming
 			context = snowball_stem(language, context)
-
-			print lexelt
-			print context
-			sys.exit(0)
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
@@ -272,9 +266,9 @@ def build_context_vectors(s, contexts):
 	for each_context in contexts:
 		context_vector = [0] * len(s)
 		for each_word in each_context:
-			if each_word in s:
-				idx = s.index(each_word)
-				context_vector[idx] +=1
+			# if each_word in s:
+			idx = s.index(each_word)
+			context_vector[idx] +=1
 		context_vectors.append(context_vector)
 	return context_vectors
 
