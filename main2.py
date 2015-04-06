@@ -31,7 +31,7 @@ def replace_numerals(input_str):
 	return new_str
 
 def apply_features(input_str):
-	# input_str = remove_punctuation(input_str)
+	input_str = remove_punctuation(input_str)
 	# input_str = replace_accented(input_str)
 	# input_str = input_str.lower()
 	# input_str = replace_numerals(input_str)
