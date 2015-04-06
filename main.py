@@ -9,7 +9,7 @@ from nltk.corpus import wordnet as wn
 import string
 import math
 
-K_DIST = 20
+K_DIST = 10
 
 def remove_punctuation(input_str):
 	for c in string.punctuation:
