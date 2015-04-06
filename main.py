@@ -188,6 +188,7 @@ def build_train_vectors(language):
 			# FEAT: stemming
 			context = snowball_stem(language, context)
 
+			print lexelt
 			print context
 			sys.exit(0)
 			
