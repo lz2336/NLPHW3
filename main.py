@@ -266,9 +266,9 @@ def build_context_vectors(s, contexts):
 	for each_context in contexts:
 		context_vector = [0] * len(s)
 		for each_word in each_context:
-			# if each_word in s:
-			idx = s.index(each_word)
-			context_vector[idx] +=1
+			if each_word in s:
+				idx = s.index(each_word)
+				context_vector[idx] +=1
 		context_vectors.append(context_vector)
 	return context_vectors
 
