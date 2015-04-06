@@ -170,24 +170,34 @@ def build_train_vectors(language):
 			left = nltk.word_tokenize(apply_features(left_str))
 			right = nltk.word_tokenize(apply_features(right_str))
 
+			# FEAT: remove stopwords
+			left = remove_stopwords(language, left)
+			right = remove_stopwords(language, right)
+
+			# FEAT: stemming:
+			left = snowball_stem(language, left)
+			right = snowball_stem(language, right)
+
+
+
 			left_k = left[-K_DIST:]
 			right_k = right[0:K_DIST]
 			context = []
 			context = left_k + right_k
 
-			# Skip if context happens to be empty 
-			if context == []:
-				continue
+			# # Skip if context happens to be empty 
+			# if context == []:
+			# 	continue
 
-			# FEAT: remove stopwords
-			context = remove_stopwords(language, context)
+			# # FEAT: remove stopwords
+			# context = remove_stopwords(language, context)
 
-			# # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words of context
-			# if language == 'English':
-			# 	context = add_related_words(context)
+			# # # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words of context
+			# # if language == 'English':
+			# # 	context = add_related_words(context)
 
-			# FEAT: stemming
-			context = snowball_stem(language, context)
+			# # FEAT: stemming
+			# context = snowball_stem(language, context)
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
