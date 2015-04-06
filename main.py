@@ -20,11 +20,23 @@ def replace_accented(input_str):
     nkfd_form = unicodedata.normalize('NFKD', input_str)
     return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
+def replace_numerals(input_str):
+	words = nltk.word_tokenize(input_str)
+	new_str = ''
+	for word in words:
+		if word.isdigit():
+			new_str += '_NUM_ ')
+		else:
+			new_str += word + ' ')
+	return replaced_words
+
 def apply_features(input_str):
 	input_str = remove_punctuation(input_str)
 	input_str = replace_accented(input_str)
 	input_str = input_str.lower()
+	input_str = replace_numerals(input_str)
 	return input_str
+
 
 def remove_stopwords(language, words):
 	language = language.lower()
