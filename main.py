@@ -86,6 +86,39 @@ def add_related_words(context):
 		context += get_related_words(context[each_idx])
 	return context
 
+def calculate_rel_score(word, sense_id, contexts, sense_ids):
+	word_in_context = 0
+	word_in_context_same_sense = 0
+	word_in_context_notsame_sense = 0
+
+	for each_context, each_sense_id in zip(contexts, sense_ids):
+		if word in each_context:
+			word_in_context += 1
+			if sense_id == each_sense_id:
+				word_in_context_same_sense += 1
+			else:
+				word_in_context_notsame_sense += 1
+
+	if word_in_context_notsame_sense == 0:
+		rel_score = 1000
+	else:
+		rel_score = math.log(word_in_context_same_sense / word_in_context_notsame_sense)
+
+	return rel_score
+
+def shrink_ctxt_rel_score(context, sense_id, contexts, sense_ids):
+	rel_scores = []
+	for each_word in context:
+		rel_score = calculate_rel_score(each_word, sense_id, contexts, sense_ids)
+		rel_scores.append((each_word, rel_score))
+	sorted_scores = sorted(rel_scores, key=lambda d: d[1])
+	cutoff = len(sorted_scores) // 2
+	new_context = []
+	for i in xrange(0, cutoff + 1):
+		word = sorted_scores(i)[0]
+		new_context.append(word)
+	return new_context
+
 
 def build_train_vectors(language):
 	'''
@@ -96,7 +129,7 @@ def build_train_vectors(language):
 	xmldoc = minidom.parse(input_file)
 	lex_list = xmldoc.getElementsByTagName('lexelt')
 	for node in lex_list:
-		lexelt = replace_accented(node.getAttribute('item'))
+		lexelt = node.getAttribute('item')
 		data[lexelt] = ()
 		inst_list = node.getElementsByTagName('instance')
 		sense_ids = []
@@ -106,7 +139,7 @@ def build_train_vectors(language):
 			#instance_id = inst.getAttribute('id')
 			sense_id = replace_accented(inst.getElementsByTagName('answer')[0].getAttribute('senseid'))
 			
-			#FEAT: skip senses with senseid "U" (English only)
+			# FEAT: skip senses with senseid "U" (English only)
 			if sense_id == 'U':
 				continue
 			
@@ -129,17 +162,12 @@ def build_train_vectors(language):
 			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
 
-			# FEAT: adding synonyms, hypernyms and hyponyms for middle 5 words
-			if language == 'English':
-				context = add_related_words(context)
+			# # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words of context
+			# if language == 'English':
+			# 	context = add_related_words(context)
 
 			# FEAT: stemming
-			# if language == 'English':
-				# context = porter_stem(context)
-				# context = lancaster_stem(context)
 			context = snowball_stem(language, context)
-
-			print context
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
@@ -149,7 +177,12 @@ def build_train_vectors(language):
 		
 		# remove duplicate items in all_context_words to create s
 		s = []
-		for each_context in contexts:
+		for each_context, each_sense_id in zip(contexts, sense_ids):
+			# FEAT: 4c shrink contexts based on relevance score
+			each_context = shrink_ctxt_rel_score(each_context, each_sense_id, contexts, sense_ids)
+
+			print each_context
+
 			for each_word in each_context:
 				if each_word not in s:
 					s.append(each_word)
@@ -198,8 +231,9 @@ def build_dev_data(language):
 			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
 
-			if language == 'English':
-				context = add_related_words(context)
+			# # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words in context
+			# if language == 'English':
+			# 	context = add_related_words(context)
 
 			# FEAT: stemming
 			# if language == 'English':
@@ -234,25 +268,6 @@ def build_context_vectors(s, contexts):
 		context_vectors.append(context_vector)
 	return context_vectors
 
-# def build_context_vectors_w_related(s, contexts):
-# 	context_vectors = []
-# 	for each_context in contexts:
-# 		context_vector = [0] * len(s)
-
-# 		for each_word in each_context:
-# 			if each_word in s:
-# 				idx = s.index(each_word)
-# 				context_vector[idx] += 1
-# 			else:
-# 				related_words = get_synonyms(each_word) #+ get_hypernyms(each_word) + get_hyponyms(each_word)
-# 				for each_related_word in related_words:
-# 					if w in s:
-# 						idx = s.index(each_related_word)
-# 						context_vector[idx] += 1
-# 						break
-# 		context_vectors.append(context_vector)
-# 	return context_vectors
-
 def train_svm(data, targets):
 	svm_clf = svm.LinearSVC()
 	svm_clf.fit(data, targets)
@@ -282,11 +297,6 @@ def disambiguate(language, model, train_data, dev_data):
 			context = each_id_ctxt_tuple[1]
 			# Build context vector
 			s = train_data[lexelt][0]
-			
-			# if language == 'English':
-			# 	# FEAT: build context vectors with related words (en only)
-			# 	context_vector = build_context_vectors_w_related(s, [context])[0]
-			# else:
 			context_vector = build_context_vectors(s, [context])[0]
 			
 			# print s
