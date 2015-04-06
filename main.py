@@ -229,7 +229,7 @@ def build_train_vectors(language):
 
 		# FEAT: 4d  chi2
 		new_s = chi_sq_filter(s, sense_ids, context_vectors)
-		context_vectors = build_context_vectors(s, contexts)
+		context_vectors = build_context_vectors(new_s, contexts)
 
 		data[lexelt] = (s, sense_ids, context_vectors)
 	return data
