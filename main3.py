@@ -139,7 +139,7 @@ def shrink_ctxt_rel_score(context, sense_id, contexts, sense_ids):
 def chi_sq_filter(s, sense_ids, context_vectors):
 	chi2_values, p_values = chi2(context_vectors, sense_ids)
 	s_copy = s
-	cutoff = len(s) * 4 // 5
+	# cutoff = len(s) * 4 // 5
 	new_s = []
 
 	for p_value, word in sorted(zip(p_values, s_copy), key=lambda d: d[0]):
