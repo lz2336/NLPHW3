@@ -249,23 +249,32 @@ def build_dev_data(language):
 			left = nltk.word_tokenize(apply_features(left_str))
 			right = nltk.word_tokenize(apply_features(right_str))
 
+			# FEAT: remove stopwords
+			left = remove_stopwords(language, left)
+			right = remove_stopwords(language, right)
+
+			# FEAT: stemming
+			left = snowball_stem(language, left)
+			right = snowball_stem(language, right)
+
+
 			left_k = left[-K_DIST:]
 			right_k = right[0:K_DIST]
 			context = []
 			context = left_k + right_k
 
-			# FEAT: remove stopwords
-			context = remove_stopwords(language, context)
+			# # FEAT: remove stopwords
+			# context = remove_stopwords(language, context)
 
-			# # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words in context
-			# if language == 'English':
-			# 	context = add_related_words(context)
+			# # # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words in context
+			# # if language == 'English':
+			# # 	context = add_related_words(context)
 
-			# FEAT: stemming
-			# if language == 'English':
-			# 	context = porter_stem(context)
-			# 	context = lancaster_stem(context)
-			context = snowball_stem(language, context)
+			# # FEAT: stemming
+			# # if language == 'English':
+			# # 	context = porter_stem(context)
+			# # 	context = lancaster_stem(context)
+			# context = snowball_stem(language, context)
 
 			data[lexelt].append((instance_id.encode('utf-8', 'ignore'), context))
 
