@@ -136,8 +136,8 @@ def shrink_ctxt_rel_score(context, sense_id, contexts, sense_ids):
 		new_context.append(word)
 	return new_context
 
-def chi_sq_filter(s, context_vectors):
-	chi2_values, p_values = chi2(context_vectors, s)
+def chi_sq_filter(s, sense_ids, context_vectors):
+	chi2_values, p_values = chi2(context_vectors, sense_ids)
 	s_copy = s
 	cutoff = len(s) // 2
 	new_s = []
@@ -228,7 +228,7 @@ def build_train_vectors(language):
 		context_vectors = build_context_vectors(s, contexts)
 
 		# FEAT: 4d  chi2
-		new_s = chi_sq_filter(s, context_vectors)
+		new_s = chi_sq_filter(s, sense_ids, context_vectors)
 		context_vectors = build_context_vectors(s, contexts)
 
 		data[lexelt] = (s, sense_ids, context_vectors)
