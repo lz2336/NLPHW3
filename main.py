@@ -87,33 +87,6 @@ def add_related_words(context):
 	return context
 
 
-
-
-# def parse_data(input_file):
-# 	'''
-# 	Parse the .xml dev data file
-
-# 	param str input_file: The input data file path
-# 	return dict: A dictionary with the following structure
-# 		{
-# 			lexelt: [(instance_id, context), ...],
-# 			...
-# 		}
-# 	'''
-# 	xmldoc = minidom.parse(input_file)
-# 	data = {}
-# 	lex_list = xmldoc.getElementsByTagName('lexelt')
-# 	for node in lex_list:
-# 		lexelt = format_str(node.getAttribute('item'))
-# 		data[lexelt] = []
-# 		inst_list = node.getElementsByTagName('instance')
-# 		for inst in inst_list:
-# 			instance_id = inst.getAttribute('id')
-# 			l = inst.getElementsByTagName('context')[0]
-# 			context = (l.childNodes[0].nodeValue + l.childNodes[1].firstChild.nodeValue + l.childNodes[2].nodeValue).replace('\n', '')
-# 			data[lexelt].append((instance_id, context))
-# 	return data
-
 def build_train_vectors(language):
 	'''
 	##############
@@ -157,7 +130,9 @@ def build_train_vectors(language):
 			context = remove_stopwords(language, context)
 
 			# FEAT: adding synonyms, hypernyms and hyponyms for middle 5 words
-			context = add_related_words(context)
+			if language = 'English':
+				context = add_related_words(context)
+
 			# FEAT: stemming
 			# if language == 'English':
 				# context = porter_stem(context)
@@ -223,6 +198,9 @@ def build_dev_data(language):
 			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
 
+			if language = 'English':
+				context = add_related_words(context)
+
 			# FEAT: stemming
 			# if language == 'English':
 			# 	context = porter_stem(context)
@@ -256,24 +234,24 @@ def build_context_vectors(s, contexts):
 		context_vectors.append(context_vector)
 	return context_vectors
 
-def build_context_vectors_w_related(s, contexts):
-	context_vectors = []
-	for each_context in contexts:
-		context_vector = [0] * len(s)
+# def build_context_vectors_w_related(s, contexts):
+# 	context_vectors = []
+# 	for each_context in contexts:
+# 		context_vector = [0] * len(s)
 
-		for each_word in each_context:
-			if each_word in s:
-				idx = s.index(each_word)
-				context_vector[idx] += 1
-			else:
-				related_words = get_synonyms(each_word) #+ get_hypernyms(each_word) + get_hyponyms(each_word)
-				for each_related_word in related_words:
-					if w in s:
-						idx = s.index(each_related_word)
-						context_vector[idx] += 1
-						break
-		context_vectors.append(context_vector)
-	return context_vectors
+# 		for each_word in each_context:
+# 			if each_word in s:
+# 				idx = s.index(each_word)
+# 				context_vector[idx] += 1
+# 			else:
+# 				related_words = get_synonyms(each_word) #+ get_hypernyms(each_word) + get_hyponyms(each_word)
+# 				for each_related_word in related_words:
+# 					if w in s:
+# 						idx = s.index(each_related_word)
+# 						context_vector[idx] += 1
+# 						break
+# 		context_vectors.append(context_vector)
+# 	return context_vectors
 
 def train_svm(data, targets):
 	svm_clf = svm.LinearSVC()
