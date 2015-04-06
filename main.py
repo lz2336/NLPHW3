@@ -7,6 +7,7 @@ from sklearn import svm, neighbors
 import nltk
 from nltk.corpus import wordnet as wn
 import string
+import math
 
 K_DIST = 10
 
