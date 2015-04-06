@@ -195,12 +195,14 @@ def build_train_vectors(language):
 		s = []
 		for each_context, each_sense_id in zip(contexts, sense_ids):
 
-			# FEAT: 4c shrink contexts based on relevance score
-			each_context = shrink_ctxt_rel_score(each_context, each_sense_id, contexts, sense_ids)
+			# # FEAT: 4c shrink contexts based on relevance score
+			# each_context = shrink_ctxt_rel_score(each_context, each_sense_id, contexts, sense_ids)
 
 			for each_word in each_context:
 				if each_word not in s:
 					s.append(each_word)
+		print s
+		sys.exit(0)
 
 		# # Calculate context vectors with respect to s
 		context_vectors = build_context_vectors(s, contexts)
