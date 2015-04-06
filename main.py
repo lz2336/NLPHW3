@@ -169,15 +169,14 @@ def build_train_vectors(language):
 			context = left_k + right_k
 
 			# FEAT: remove stopwords
-			print context
-			context = remove_stopwords(language, context)
+			# context = remove_stopwords(language, context)
 
 			# # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words of context
 			# if language == 'English':
 			# 	context = add_related_words(context)
 
 			# FEAT: stemming
-			context = snowball_stem(language, context)
+			# context = snowball_stem(language, context)
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
