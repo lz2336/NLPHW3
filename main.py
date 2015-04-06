@@ -137,7 +137,7 @@ def shrink_ctxt_rel_score(context, sense_id, contexts, sense_ids):
 	return new_context
 
 def chi_sq_filter(s, context_vectors):
-	p_values = chi2(context_vectors, s)[1]
+	chi2_values, p_values = chi2(context_vectors, s)
 	s_copy = s
 	cutoff = len(s) // 2
 	new_s = []
