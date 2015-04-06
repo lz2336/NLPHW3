@@ -178,12 +178,13 @@ def build_train_vectors(language):
 			left = snowball_stem(language, left)
 			right = snowball_stem(language, right)
 
-
-
 			left_k = left[-K_DIST:]
 			right_k = right[0:K_DIST]
 			context = []
 			context = left_k + right_k
+
+			print context
+			sys.exit(0)
 
 			# # Skip if context happens to be empty 
 			# if context == []:
