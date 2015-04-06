@@ -142,7 +142,7 @@ def chi_sq_filter(s, context_vectors):
 	cutoff = len(s) // 2
 	new_s = []
 
-	for p_value, word in sorted(zip(p_values, s_copy), key=lambda d: d[0])][:(cutoff + 1)]:
+	for p_value, word in sorted(zip(p_values, s_copy), key=lambda d: d[0]))[:(cutoff + 1)]:
 		new_s.append(word)
 
 	return new_s
