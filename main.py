@@ -114,7 +114,6 @@ def calculate_rel_score(word, sense_id, contexts, sense_ids):
 	return rel_score
 
 def shrink_ctxt_rel_score(context, sense_id, contexts, sense_ids):
-	print context
 	rel_scores = []
 	for each_word in context:
 		rel_score = calculate_rel_score(each_word, sense_id, contexts, sense_ids)
@@ -170,6 +169,7 @@ def build_train_vectors(language):
 			context = left_k + right_k
 
 			# FEAT: remove stopwords
+			print context
 			context = remove_stopwords(language, context)
 
 			# # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words of context
