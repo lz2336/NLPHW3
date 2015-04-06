@@ -122,8 +122,6 @@ def shrink_ctxt_rel_score(context, sense_id, contexts, sense_ids):
 	cutoff = len(sorted_scores) * 4 // 5
 	new_context = []
 	for i in xrange(0, cutoff + 1):
-		print 'i='
-		print i
 		word = sorted_scores[i][0]
 		new_context.append(word)
 	return new_context
@@ -179,7 +177,7 @@ def build_train_vectors(language):
 			# 	context = add_related_words(context)
 
 			# FEAT: stemming
-			context = snowball_stem(language, context)
+			# context = snowball_stem(language, context)
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
@@ -192,8 +190,6 @@ def build_train_vectors(language):
 		for each_context, each_sense_id in zip(contexts, sense_ids):
 			# FEAT: 4c shrink contexts based on relevance score
 			each_context = shrink_ctxt_rel_score(each_context, each_sense_id, contexts, sense_ids)
-
-			print each_context
 
 			for each_word in each_context:
 				if each_word not in s:
@@ -251,7 +247,7 @@ def build_dev_data(language):
 			# if language == 'English':
 			# 	context = porter_stem(context)
 			# 	context = lancaster_stem(context)
-			context = snowball_stem(language, context)
+			# context = snowball_stem(language, context)
 
 		# # Calculate context vectors with respect to s
 		# context_vectors = []
