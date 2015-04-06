@@ -93,7 +93,7 @@ def get_related_words(word):
 	return related_words
 
 def add_related_words(context):
-	mid = len(context) // 2
+	mid = len(context) * 4 // 5
 	mid_five = [mid - 2, mid - 1, mid, mid + 1, mid + 2]
 	for each_idx in mid_five:
 		context += get_related_words(context[each_idx])
