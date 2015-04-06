@@ -119,7 +119,7 @@ def shrink_ctxt_rel_score(context, sense_id, contexts, sense_ids):
 		rel_score = calculate_rel_score(each_word, sense_id, contexts, sense_ids)
 		rel_scores.append((each_word, rel_score))
 	sorted_scores = sorted(rel_scores, key=lambda d: d[1])
-	cutoff = len(sorted_scores) // 2
+	cutoff = len(sorted_scores) * 4 // 5
 	new_context = []
 	for i in xrange(0, cutoff + 1):
 		print 'i='
