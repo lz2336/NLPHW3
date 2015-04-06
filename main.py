@@ -34,7 +34,7 @@ def apply_features(input_str):
 	input_str = remove_punctuation(input_str)
 	input_str = replace_accented(input_str)
 	input_str = input_str.lower()
-	input_str = replace_numerals(input_str)
+	# input_str = replace_numerals(input_str)
 	return input_str
 
 
@@ -182,9 +182,6 @@ def build_train_vectors(language):
 			right_k = right[0:K_DIST]
 			context = []
 			context = left_k + right_k
-
-			print context
-			sys.exit(0)
 
 			# # Skip if context happens to be empty 
 			# if context == []:
