@@ -9,7 +9,7 @@ from nltk.corpus import wordnet as wn
 import string
 import math
 
-K_DIST = 10
+K_DIST = 20
 
 def remove_punctuation(input_str):
 	for c in string.punctuation:
@@ -238,8 +238,8 @@ def build_dev_data(language):
 			left = nltk.word_tokenize(apply_features(left_str))
 			right = nltk.word_tokenize(apply_features(right_str))
 
-			left_k = left[-10:]
-			right_k = right[0:10]
+			left_k = left[-K_DIST:]
+			right_k = right[0:K_DIST]
 			context = []
 			context = left_k + right_k
 
