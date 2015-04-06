@@ -143,7 +143,7 @@ def chi_sq_filter(s, sense_ids, context_vectors):
 	new_s = []
 
 	for p_value, word in sorted(zip(p_values, s_copy), key=lambda d: d[0]):
-		if p_value < 0.6:
+		if p_value < 0.9:
 			new_s.append(word)
 		else:
 			break
