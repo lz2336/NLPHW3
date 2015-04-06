@@ -247,6 +247,8 @@ def build_dev_data(language):
 			context = []
 			context = left_k + right_k
 
+			print context
+
 			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
 
