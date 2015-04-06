@@ -130,7 +130,7 @@ def build_train_vectors(language):
 			context = remove_stopwords(language, context)
 
 			# FEAT: adding synonyms, hypernyms and hyponyms for middle 5 words
-			if language = 'English':
+			if language == 'English':
 				context = add_related_words(context)
 
 			# FEAT: stemming
@@ -198,7 +198,7 @@ def build_dev_data(language):
 			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
 
-			if language = 'English':
+			if language == 'English':
 				context = add_related_words(context)
 
 			# FEAT: stemming
