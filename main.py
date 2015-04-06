@@ -227,9 +227,10 @@ def build_train_vectors(language):
 		# # Calculate context vectors with respect to s
 		context_vectors = build_context_vectors(s, contexts)
 
-		# FEAT: 4d  chi2
-		s = chi_sq_filter(s, sense_ids, context_vectors)
-		context_vectors = build_context_vectors(s, contexts)
+		# FEAT: 4d  chi2, for Catalan and Spanish
+		if language != 'English':
+			s = chi_sq_filter(s, sense_ids, context_vectors)
+			context_vectors = build_context_vectors(s, contexts)
 
 		data[lexelt] = (s, sense_ids, context_vectors)
 	return data
