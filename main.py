@@ -4,6 +4,7 @@ import codecs
 import sys
 import unicodedata
 from sklearn import svm, neighbors
+from sklearn.feature_selection import chi2
 import nltk
 from nltk.corpus import wordnet as wn
 import string
@@ -135,6 +136,18 @@ def shrink_ctxt_rel_score(context, sense_id, contexts, sense_ids):
 		new_context.append(word)
 	return new_context
 
+def chi_sq_filter(s, context_vectors):
+	p_values = chi2(context_vectors, s)[1]
+	s_copy = s
+	cutoff = len(s) // 2
+	new_s = []
+
+	for p_value, word in sorted(zip(p_values, s_copy), key=lambda d: d[0])][:(cutoff + 1)]:
+		new_s.append(word)
+
+	return new_s
+
+
 
 def build_train_vectors(language):
 	'''
@@ -214,11 +227,11 @@ def build_train_vectors(language):
 		# # Calculate context vectors with respect to s
 		context_vectors = build_context_vectors(s, contexts)
 
-		data[lexelt] = (s, sense_ids, context_vectors)
-		# print lexelt
-		# print sense_ids
-		# print context_vectors
+		# FEAT: 4d  chi2
+		new_s = chi_sq_filter(s, context_vectors)
+		context_vectors = build_context_vectors(s, contexts)
 
+		data[lexelt] = (s, sense_ids, context_vectors)
 	return data
 
 def build_dev_data(language):
