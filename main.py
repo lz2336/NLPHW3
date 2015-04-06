@@ -31,24 +31,13 @@ def replace_numerals(input_str):
 			new_str += (word + ' ')
 	return new_str
 
-# def apply_features(input_str):
-# 	input_str = remove_punctuation(input_str)
-# 	input_str = replace_accented(input_str)
-# 	input_str = input_str.lower()
-# 	# input_str = replace_numerals(input_str)
-# 	return input_str
-
-def apply_features(input_str, language):
-	if language == 'English':
-		# input_str = remove_punctuation(input_str)
-		# input_str = replace_accented(input_str)
-		input_str = input_str.lower()
-	else:
-		input_str = remove_punctuation(input_str)
-		input_str = replace_accented(input_str)
-		input_str = input_str.lower()
-
+def apply_features(input_str):
+	input_str = remove_punctuation(input_str)
+	input_str = replace_accented(input_str)
+	input_str = input_str.lower()
+	# input_str = replace_numerals(input_str)
 	return input_str
+
 
 def remove_stopwords(language, words):
 	language = language.lower()
@@ -191,8 +180,8 @@ def build_train_vectors(language):
 			left_str = l.childNodes[0].nodeValue.replace('\n', '')
 			right_str = l.childNodes[2].nodeValue.replace('\n', '')
 
-			left = nltk.word_tokenize(apply_features(left_str, language))
-			right = nltk.word_tokenize(apply_features(right_str, language))
+			left = nltk.word_tokenize(apply_features(left_str))
+			right = nltk.word_tokenize(apply_features(right_str))
 
 			# FEAT: remove stopwords
 			left = remove_stopwords(language, left)
@@ -269,8 +258,8 @@ def build_dev_data(language):
 			left_str = l.childNodes[0].nodeValue.replace('\n', '')
 			right_str = l.childNodes[2].nodeValue.replace('\n', '')
 
-			left = nltk.word_tokenize(apply_features(left_str, language))
-			right = nltk.word_tokenize(apply_features(right_str, language))
+			left = nltk.word_tokenize(apply_features(left_str))
+			right = nltk.word_tokenize(apply_features(right_str))
 
 			# FEAT: remove stopwords
 			left = remove_stopwords(language, left)
