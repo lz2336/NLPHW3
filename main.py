@@ -100,10 +100,6 @@ def calculate_rel_score(word, sense_id, contexts, sense_ids):
 			else:
 				word_in_context_notsame_sense += 1
 
-	print word_in_context
-	print word_in_context_same_sense
-	print word_in_context_notsame_sense
-
 	if word_in_context_notsame_sense == 0:
 		rel_score = 1000
 	elif word_in_context_same_sense == 0:
@@ -177,7 +173,7 @@ def build_train_vectors(language):
 			# 	context = add_related_words(context)
 
 			# FEAT: stemming
-			context = snowball_stem(language, context)
+			# context = snowball_stem(language, context)
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
@@ -237,7 +233,7 @@ def build_dev_data(language):
 			context = left_k + right_k
 
 			# FEAT: remove stopwords
-			context = remove_stopwords(language, context)
+			# context = remove_stopwords(language, context)
 
 			# # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words in context
 			# if language == 'English':
