@@ -25,9 +25,9 @@ def replace_numerals(input_str):
 	new_str = ''
 	for word in words:
 		if word.isdigit():
-			new_str += '_NUM_ ')
+			new_str += '_NUM_ '
 		else:
-			new_str += word + ' ')
+			new_str += (word + ' ')
 	return replaced_words
 
 def apply_features(input_str):
