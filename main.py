@@ -142,9 +142,9 @@ def build_train_vectors(language):
 			#instance_id = inst.getAttribute('id')
 			sense_id = replace_accented(inst.getElementsByTagName('answer')[0].getAttribute('senseid'))
 			
-			# FEAT: skip senses with senseid "U" (English only)
-			if sense_id == 'U':
-				continue
+			# # FEAT: skip senses with senseid "U" (happens in English-train)
+			# if sense_id == 'U':
+			# 	continue
 			
 			if language == 'English':
 				l = inst.getElementsByTagName('context')[0]
@@ -166,7 +166,7 @@ def build_train_vectors(language):
 				continue
 
 			# FEAT: remove stopwords
-			# context = remove_stopwords(language, context)
+			context = remove_stopwords(language, context)
 
 			# # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words of context
 			# if language == 'English':
@@ -177,15 +177,13 @@ def build_train_vectors(language):
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
-
-			# print lexelt
-			# print context
 		
 		# remove duplicate items in all_context_words to create s
 		s = []
 		for each_context, each_sense_id in zip(contexts, sense_ids):
-			# FEAT: 4c shrink contexts based on relevance score
-			each_context = shrink_ctxt_rel_score(each_context, each_sense_id, contexts, sense_ids)
+
+			# # FEAT: 4c shrink contexts based on relevance score
+			# each_context = shrink_ctxt_rel_score(each_context, each_sense_id, contexts, sense_ids)
 
 			for each_word in each_context:
 				if each_word not in s:
@@ -233,7 +231,7 @@ def build_dev_data(language):
 			context = left_k + right_k
 
 			# FEAT: remove stopwords
-			# context = remove_stopwords(language, context)
+			context = remove_stopwords(language, context)
 
 			# # FEAT: add synonyms, hypernyms and hyponyms for middle 5 words in context
 			# if language == 'English':
@@ -244,18 +242,6 @@ def build_dev_data(language):
 			# 	context = porter_stem(context)
 			# 	context = lancaster_stem(context)
 			context = snowball_stem(language, context)
-
-		# # Calculate context vectors with respect to s
-		# context_vectors = []
-		# for each_context in contexts:
-		# 	# Initialize context vector: all zeros
-		# 	context_vector = [0] * len(s)
-		# 	for each_word in each_context:
-		# 		if each_word in s:
-		# 			idx = s.index(each_word)
-		# 			context_vector[idx] += 1
-
-		# 	context_vectors.append(context_vector)
 
 			data[lexelt].append((instance_id.encode('utf-8', 'ignore'), context))
 
