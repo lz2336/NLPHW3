@@ -114,6 +114,7 @@ def calculate_rel_score(word, sense_id, contexts, sense_ids):
 	return rel_score
 
 def shrink_ctxt_rel_score(context, sense_id, contexts, sense_ids):
+	print context
 	rel_scores = []
 	for each_word in context:
 		rel_score = calculate_rel_score(each_word, sense_id, contexts, sense_ids)
