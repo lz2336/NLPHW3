@@ -100,6 +100,10 @@ def calculate_rel_score(word, sense_id, contexts, sense_ids):
 			else:
 				word_in_context_notsame_sense += 1
 
+	print word_in_context
+	print word_in_context_same_sense
+	print word_in_context_notsame_sense
+	
 	if word_in_context_notsame_sense == 0:
 		rel_score = 1000
 	elif word_in_context_same_sense == 0:
