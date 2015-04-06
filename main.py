@@ -5,7 +5,7 @@ import sys
 import unicodedata
 from sklearn import svm, neighbors
 import nltk
-from nltk import wordnet as wn
+from nltk.corpus import wordnet as wn
 import string
 
 K_DIST = 10
@@ -56,16 +56,36 @@ def snowball_stem(language, words):
 	stemmed = [stemmer.stem(w) for w in words]
 	return stemmed
 
-def get_synonyms(word):
-	synonyms = []
+def get_related_words(word):
+	syno_nyms = []
+	hyper_nyms = []
+	hypo_nyms = []
 	word_synsets = wn.synsets(word)
 	for s in word_synsets:
-		lemmas = [replace_accented(w) for w in s.lemma_names()]
-		for w in lemmas:
-			w = snowball_stem('English', w)
-			if w not in synonyms:
-				synonyms.append(w)
-	return synonyms
+		# Get synonyms
+		for lemma in s.lemma_names():
+			if lemma not in syno_nyms:
+				syno_nyms.append(lemma)
+		# Get hypernyms
+		for s_hyper in s.hypernyms():
+			hyper_w = s_hyper.name().split('.')[0]
+			if hyper_w not in hyper_nyms:
+				hyper_nyms.append(hyper_w)
+		# Get hyponyms
+		for s_hypo in s.hyponyms():
+			hypo_w = s_hypo.name().split('.')[0]
+			if hypo_w not in hypo_nyms:
+				hypo_nyms.append(hypo_w)
+	related_words = syno_nyms + hyper_nyms + hypo_nyms
+	return related_words
+
+def add_related_words(context):
+	mid = len(context) // 2
+	mid_five = [mid - 2, mid - 1, mid, mid + 1, mid + 2]
+	for each_idx in mid_five:
+		context += get_related_words(context[each_idx])
+	return context
+
 
 
 
@@ -136,12 +156,13 @@ def build_train_vectors(language):
 			# FEAT: remove stopwords
 			context = remove_stopwords(language, context)
 
+			# FEAT: adding synonyms, hypernyms and hyponyms for middle 5 words
+			context = add_related_words(context)
 			# FEAT: stemming
 			# if language == 'English':
 				# context = porter_stem(context)
 				# context = lancaster_stem(context)
 			context = snowball_stem(language, context)
-
 
 			print context
 			
@@ -177,7 +198,7 @@ def build_dev_data(language):
 	xmldoc = minidom.parse(input_file)
 	lex_list = xmldoc.getElementsByTagName('lexelt')
 	for node in lex_list:
-		lexelt = replace_accented(node.getAttribute('item'))
+		lexelt = node.getAttribute('item')
 		data[lexelt] = []
 		inst_list = node.getElementsByTagName('instance')
 
@@ -239,6 +260,7 @@ def build_context_vectors_w_related(s, contexts):
 	context_vectors = []
 	for each_context in contexts:
 		context_vector = [0] * len(s)
+
 		for each_word in each_context:
 			if each_word in s:
 				idx = s.index(each_word)
@@ -283,16 +305,16 @@ def disambiguate(language, model, train_data, dev_data):
 			# Build context vector
 			s = train_data[lexelt][0]
 			
-			if language == 'English':
-				# FEAT: build context vectors with related words (en only)
-				context_vector = build_context_vectors_w_related(s, [context])[0]
-			else:
-				context_vector = build_context_vectors(s, [context])[0]
+			# if language == 'English':
+			# 	# FEAT: build context vectors with related words (en only)
+			# 	context_vector = build_context_vectors_w_related(s, [context])[0]
+			# else:
+			context_vector = build_context_vectors(s, [context])[0]
 			
 			# print s
 			# print context_vector
-			print lexelt
-			print instance_id
+			# print lexelt
+			# print instance_id
 			# Predict
 			svm_predict_sense_id = model[lexelt][0].predict(context_vector)[0]
 			kneighbors_predict_sense_id = model[lexelt][1].predict(context_vector)[0]
@@ -301,10 +323,8 @@ def disambiguate(language, model, train_data, dev_data):
 			print kneighbors_predict_sense_id
 
 			# output
-			# outfile_svm.write(replace_accented(lexelt) + ' ' + replace_accented(instance_id) + ' ' + replace_accented(svm_predict_sense_id) + '\n')
-			# outfile_kneighbors.write(replace_accented(lexelt) + ' ' + replace_accented(instance_id) + ' ' + replace_accented(kneighbors_predict_sense_id) + '\n')
-			outfile_svm.write(lexelt + ' ' + instance_id + ' ' + svm_predict_sense_id + '\n')
-			outfile_kneighbors.write(lexelt + ' ' + instance_id + ' ' + kneighbors_predict_sense_id + '\n')
+			outfile_svm.write(replace_accented(lexelt) + ' ' + instance_id + ' ' + svm_predict_sense_id + '\n')
+			outfile_kneighbors.write(replace_accented(lexelt) + ' ' + instance_id + ' ' + kneighbors_predict_sense_id + '\n')
 	outfile_svm.close()
 	outfile_kneighbors.close()
 
