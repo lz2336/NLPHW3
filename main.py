@@ -187,6 +187,9 @@ def build_train_vectors(language):
 
 			# FEAT: stemming
 			context = snowball_stem(language, context)
+
+			print context
+			sys.exit(0)
 			
 			sense_ids.append(sense_id.encode('utf-8', 'ignore'))
 			contexts.append(context)
@@ -201,8 +204,6 @@ def build_train_vectors(language):
 			for each_word in each_context:
 				if each_word not in s:
 					s.append(each_word)
-		print s
-		sys.exit(0)
 
 		# # Calculate context vectors with respect to s
 		context_vectors = build_context_vectors(s, contexts)
