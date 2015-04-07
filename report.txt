@@ -1,0 +1,330 @@
+*************************************************
+COMS 4705 Natural Language Processing
+Spring 2015
+				HOMEWORK 3
+				Lingzi Zhuang
+				lz2336@columbia.edu
+*************************************************
+
+In this report, I will present the results from my experiments with various combinations of feature selection methods suggested in the assignment, as well as discuss the reasons behind the observations and the choice of feature selection methods. 
+
+This report has two parts. Part 1 is a summary of the final combination of feature selection criteria, the final scores, and how each criterion improves the score. Part 2 traces the experimentation path that has led to the final combination. I will discuss some implementation details, describe in detail how and how much each feature enhances or lowers performance, and explain the reasoning behind my choice of each criterion.
+
+-------------------
+PART 1. Summary
+
+- Throughout the experiment, SVM has generated consistently higher scores than K-Neighbors. Therefore the final classifier choice is SVM. All K-Neighbors scores are nevertheless recorded; however, I have focused my attention on optimising SVM scores. See PART 2 for details.
+
+- Below is a list of feature selection criteria which yield the final highest scores. Some features are only implemented on a subset of languages, either intentionally or because there lack tools.
+
+	K_DIST = 15 (windowsize = 30)
+
+	remove_punctuation
+	all_lower_case
+	replace_accented
+
+	**The above 4 criteria increases English scores from 0.620 to 0.621, Catalan scores from 0.824 to 0.825, and Spanish scores from 0.783 to 0.784.
+
+	remove_stopwords
+	snowball_stem (eng, spa)
+
+	**Removing stopwords and stemming increase English score from 0.621 to 0.639, Catalan score from 0.825 to 0.834, Spanish score from 0.784 to 0.809.
+
+	chi2_filter (cat, spa)
+	**Chi-2 increases Catalan score from 0.834 to 0.844, Spanish score from 0.809 to 0.811. 
+
+- Below is the list of final best scores, with the above features (K-Neighbors included)
+
+		SVM		K-Neighbors		baseline
+English 0.639	0.509			0.535
+Catalan 0.844	0.705			0.678
+Spanish 0.811	0.679			0.684
+
+
+
+
+------------------------
+PART 2. Implementation notes, experiments, results and discussions
+
+The following is a comprehensive record of my experiments with the combination of feature selection criteria as I worked through the parts of this assignment. Experiments are <numbered> and indicated by the corresponding [question number in the assignment]. A list of all criteria at work in that specific experiment is given on top of each experiment record. Discussion is indicated by >> .
+
+*** Note: As I built and tested more criteria, sometimes a previously-chosen set of criteria might become a hindrance to newly-added criteria. Sometimes the model itself also underwent changes (such as bug removal). In these cases, I have rerun all the previous experiments and update their scores accordingly. If previously-chosen criteria did end up hampering new improvement, I would run specific "Revisit" experiments to show why I removed them. ***
+
+<1> [2] Initially: K_DIST = 10. No extra features involved.
+
+		SVM		K-Neighbors		baseline
+English	0.620	0.569			0.535
+Catalan	0.824	0.709			0.678
+Spanish	0.783	0.700			0.684
+
+>> We see that SVM gives much better scores than K-Neighbors. This will be our classfier choice. K-Neighbors scores will be recorded in all upcoming experiments, but will not be optimised.
+
+<2> [4a] remove_punctuation
+		SVM		K-Neighbors		baseline
+English	0.605-	0.549			0.535
+Catalan	0.830+	0.713			0.678
+Spanish	0.781-	0.685			0.684
+
+<3> [4a] all_lower_case, remove_punctuation
+		SVM		K-Neighbors		baseline
+English	0.615+	0.542			0.535
+Catalan	0.821-	0.711			0.678
+Spanish	0.780-	0.684			0.684
+
+<4> [4a] replace_accented, all_lower_case, remove_punctuation
+
+		SVM		K-Neighbors		baseline
+English	0.615	0.542			0.535
+Catalan	0.825+	0.705			0.678
+Spanish	0.784+	0.684			0.684
+
+>> These three criteria all concentrate data distribution.
+>> From <2> to <4>, it would make sense to select the following combination of features in <5>, distinguishing between English and Catalan/Spanish, which should jointly yield the best scores for all three languages.
+
+<5> [4a] replace_accented(cat, spa), all_lower_case (eng, cat, spa), remove_punctuation(eng, cat, spa) 
+		SVM		K-Neighbors		baseline
+English	0.621+	0.542			0.535
+Catalan	0.825+	0.705			0.678
+Spanish	0.784+	0.684			0.684
+
+>> ******* NOTE that, when I did <1> to <4> for the first time, the results were not as high, possibly due to other minor glitches. Therefore I stuck with the three criteria in <4> in the experiments to follow. In a "Revisit" experiment below, I will show that this combination in <5> is ACTUALLY NOT optimal, in light of an even-higher performing criterion, and that, indeed, the original combination in <4> is better.
+
+
+<6> [4a]: REMOVE STOPWORDS
+For English and Spanish, I used the stopwords corpus in nltk.corpus. For Catalan, I used the Google Stop Word List for Catalan, found at: http://meta.wikimedia.org/wiki/Stop_word_list/google_stop_word_list#Catalan. 
+
+Note that in this implementation, remove_stopwords is applied after taking the 20-word window. In experiment <8>, I will show that it should be done before taking the window.
+
+remove_stopwords, replace_accented, all_lower_case, remove_punctuation
+
+		SVM		K-Neighbors		baseline
+English	0.618+	0.523			0.535
+Catalan	0.837+	0.695			0.678
+Spanish	0.789+	0.654			0.684
+
+>> Performance improves for all three languages. Stop words tend to occur frequently and in all environments. Therefore they do not provide a lot of significant contextual information for the head word. Removing them thus concentrates distribution on linguistic substantives, and raises accuracy.
+
+<7> [4a]: STEMMING
+Test:
+- Whether stemming is advantageous
+	YES
+- Which one of the three different stemmers is the best for English.
+	SNOWBALL_STEMMER
+
+<7.1> PORTER STEMMER
+
+(en)porter_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation
+
+		SVM		K-Neighbors		baseline
+English	0.622+	0.542			0.535
+Catalan	0.837	0.695			0.678
+Spanish	0.789	0.654			0.684
+
+>> Stemming does improve performance. 
+
+<7.2> LANCASTER STEMMER
+
+(en)lancaster_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation		
+
+		SVM		K-Neighbors		baseline
+English	0.614-	0.542			0.535
+Catalan	0.837	0.695			0.678
+Spanish	0.789	0.654			0.684
+
+>> Performance actually fell back. Porter_stemmer is a better stemmer for English.
+
+<7.3> SNOWBALL STEMMER
+
+Nltk's snowball stemmer is available for English and Spanish (not Catalan). The English snowball stemmer is a slightly modified version of the Porter stemmer.
+
+(en,sp)snowball_stem, remove_stopwords, (en)skip senseid="U", replace_accented, all_lower_case, remove_punctuation
+
+		SVM		K-Neighbors		baseline
+English	0.625+	0.544			0.535
+Catalan	0.837	0.695			0.678
+Spanish	0.795+	0.669			0.684
+
+>> We see that (1) stemming also increases performance on Spanish. (2) Snowball stemming offers the highest performance out of the three stemmers for English.
+
+>> Stemming eliminates a lot of derivational morphology and thus concentrates distribution on the stems. Therefore it improves overall performance.
+
+<8> [4a] REVISIT: REMOVE STOPWORDS BEFORE TAKING THE WINDOW 
+Earlier we have been removing stopwords FROM the 20-word window. This shrinks number of linguistic substantives contained in the window, and possibly has lowered performance.
+
+(en,sp)snowball_stem, remove_stopwords (before taking window), replace_accented, all_lower_case, remove_punctuation, replace_numerals
+
+		SVM		K-Neighbors		baseline
+English	0.632+	0.547+			0.535
+Catalan	0.834+	0.689-			0.678
+Spanish	0.809+	0.712+			0.684
+
+>> Performance improves quite dramatically. This is because now we are taking in more substantives than before.
+
+<9> [4b] WORDNET FEATURES
+Test: 
+- Whether adding synonyms, hypernyms and hyponyms is advantageous
+	NO
+For this experiment, because adding related words of each word in a context is too computationally costly and results in too sparse vectors, I applied the function to the middle 5 words in each context.
+
+(en)add_related_words(syno-, hyper- and hyponyms), (en,sp)snowball_stem, remove_stopwords, (en)skip senseid="U", replace_accented, all_lower_case, remove_punctuation  
+
+		SVM		K-Neighbors		baseline
+English	0.613-	0.538			0.535
+Catalan	0.837	0.695			0.678
+Spanish	0.795+	0.669			0.684
+
+>> As we see, performance decreases dramatically. This is because the adverse effect of sparse distribution surpasses (greatly) the benefit of including related words for calculating context vectors.
+
+
+
+<10> [4c] RELEVANCE SCORE
+The point of calculating relevance scores is so that we may pre-emptively reduce the context by eliminating words that are less relevant to the sense in which it occurs, in order to concentrate distribution.
+
+Five test goals: 
+- Whether it's better to keep more (4/5) or less (half) of the context words
+	MORE
+- Whether rel_score is better than stemming at concentrating distribution
+	REL_SCORE IS WORSE
+- Whether rel_score is better at eliminating less relevant context words than remove_stop_words 
+	REL_SCORE IS WORSE
+- Whether rel_score works any better with K-window expanded to 20
+	NO
+- Whether, based on the previous four tests, relevance score is advantageous
+	NO
+
+<10.1> Keep context words whose rel_scores are in the first HALF
+
+rel_score(first HALF), (en,sp)snowball_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation 
+
+		SVM		K-Neighbors		baseline
+English	0.583-	0.520			0.535
+Catalan	0.753-	0.659			0.678
+Spanish	0.743-	0.646			0.684
+
+>> Performance drastically decreased from before.
+
+<10.2> Keep context words whose rel_scores are in the first FOUR FIFTHS
+
+rel_score(first 4/5), (en,sp)snowball_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation 
+
+		SVM		K-Neighbors		baseline
+English	0.629	0.544			0.535
+Catalan	0.830	0.712			0.678
+Spanish	0.794	0.676			0.684
+
+>> (1) Comparing with <10.1>: it is better to keep MORE of the context.
+>> (2) Comparing with <9>: performance is still lower than that before applying rel_score.
+>> At this point we need to know: insofar as rel_score concentrates data distribution, is its effect better than that of the other feature extraction criteria which also concentrates distribution? (Namely, stemming and removing stopwords. ) If it is not, then we should exclude rel_score as a poorly performing criterion.
+
+<10.3> Disable stemming, keeping rel_score
+rel_score(first 4/5), **WITHOUT (en,sp)snowball_stem**, remove_stopwords, replace_accented, all_lower_case, remove_punctuation 
+
+		SVM		K-Neighbors		baseline
+English	0.586-	0.511			0.535
+Catalan	0.835	0.697			0.678
+Spanish	0.712-	0.620			0.684
+
+>> Rel_score is WORSE than stemming.
+
+<10.4> Disable remove_stopwords, keeping rel_score
+
+rel_score(first 4/5), (en,sp)snowball_stem, **WITHOUT remove_stopwords**, replace_accented, all_lower_case, remove_punctuation 
+		SVM		K-Neighbors		baseline
+English	0.610-	0.542			0.535
+Catalan	0.831-	0.716			0.678
+Spanish	0.794-	0.689			0.684
+
+>> Rel_score is WORSE than remove_stop_words in terms of eliminating less relevant context words.
+
+<10.5> Increasing window size
+The only other possible way is which rel_score could conceivably work better is to have a larger initial window size, from which rel_score then eliminates less relevant words. 
+
+rel_score(first 1/2 with window size = 40), (en,sp)snowball_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation 
+
+		SVM		K-Neighbors		baseline
+English	0.589-	0.522-			0.535
+
+>> Performance decreased dramatically. Rel_score does not work better with a larger window size.
+
+>> Therefore, we can conclude that rel_score is not advantageous overall.
+
+
+<11> [4d] CHI-SQUARED FEATURE EXTRACTION:
+In this part, I implemented a chi2 measure on (context_vectors, corresponding_sense_ids), using the chi2 function from the scikit-learn library. For better scores, I am using window size = 30.
+
+Goals for the test:
+— Whether it is better to keep more contexts or less based on their p-values
+	KEEP MORE (THAN HALF-LINE) CONTEXTS IS BETTER 
+- Whether it is better to eliminate words with a cutoff percentage, or a p-value cutoff.
+	P-VAlUE CUTOFF EVENTUALLY WORKS BETTER
+— What exact cutoff works more optimally
+	P-VALUE < 0.9
+- Whether, based on the previous tests, chi2 is actually advantageous
+	CHI2 IS ADVANTAGEOUS FOR CATALAN AND SPANISH. ENGLISH SCORE IS HIGHER W/O CHI2
+
+<11.0> w/o chi2, windowsize = 30
+		SVM		K-Neighbors		baseline
+English 0.639	0.509			0.535
+Catalan 0.841	0.690			0.678		
+Spanish 0.810	0.675			0.684
+
+<11.1> Cut-off using percentage: keep 1/2 of the p-values
+
+chi2(keeping HALF), (en,sp)snowball_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation 
+
+		SVM		K-Neighbors		baseline
+English	0.618-	0.549+			0.535
+
+<11.2> Cut-off using percentage: keep 4/5 of the p-values
+
+chi2(keeping 4/5), (en,sp)snowball_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation 
+
+		SVM		K-Neighbors		baseline
+English 0.625-	0.535-			0.535
+
+>> Comparing <11.1> and <11.2>: Keeping more than half of the contexts is better.
+
+<11.3> Cut-off using pvalue < 0.6
+
+chi2(keeping pvalue<0.6), (en,sp)snowball_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation 
+
+		SVM		K-Neighbors		baseline
+English 0.626	0.550			0.535
+Catalan 0.833	0.704			0.678
+Spanish 0.810	0.705			0.684
+
+<11.4> Cut-off using pvalue < 0.9
+
+chi2(keeping pvalue<0.9), (en,sp)snowball_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation 
+
+		SVM		K-Neighbors		baseline
+English 0.630+	0.548			0.535
+Catalan 0.844+	0.705			0.678
+Spanish 0.811+	0.679			0.684
+
+>> Compare <11.4> with <11.1>: chi2 with windowsize = 30 yields better results for Catalan and Spanish, but worse results for English. Thus, apply chi2 discriminately to Spanish and Catalan, but not to English. 
+
+<11.5> Chi-2 to Catalan and Spanish, no chi-2 to English
+
+(cat, spa)chi2(keeping pvalue<0.9), (en,sp)snowball_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation 
+
+		SVM		K-Neighbors		baseline
+English 0.639	0.509			0.535
+Catalan 0.844	0.705			0.678
+Spanish 0.811	0.679			0.684
+
+>> This is our final best score.
+
+
+<12> REVISIT: does the combination in <5> work better eventually, or the current combination, which follows from <4>?
+
+Using the combination in <5>, we obtain the following scores
+
+		SVM		K-Neighbors		baseline
+English 0.632-	0.540			0.535
+Catalan 0.844	0.690			0.678		
+Spanish 0.810	0.675			0.684
+
+>> With the later features we implemented, the combination in <5> is not advantageous any more. Therefore we stick to the current, and final, combination:
+
+(cat, spa)chi2(keeping pvalue<0.9), (en,sp)snowball_stem, remove_stopwords, replace_accented, all_lower_case, remove_punctuation 
